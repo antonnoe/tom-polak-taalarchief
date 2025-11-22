@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Tom Polak’s Franse Uitdrukkingen — Slimme Viewer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 20px;
+    line-height: 1.5;
+    margin: 0;
+    background: #ffffff;
+    color: #111;
+  }
+
+  header {
+    background: #800000;
+    color: #fff;
+    padding: 20px 15px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  h1, h2 {
+    margin: 0;
+    padding: 0;
+  }
+
+  .panel {
+    padding: 15px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+  }
+
+  input[type="search"] {
+    width: 100%;
+    padding: 14px;
+    font-size: 20px;
+    border: 2px solid #bbb;
+    border-radius: 8px;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 8px 14px;
+    border: none;
+    background: #800000;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background: #5e0000;
+  }
+
+  .contrast {
+    background: #333;
+  }
+
+  .contrast-mode body, .contrast-mode table {
+    background: #000 !important;
+    color: #fff !important;
+  }
+
+  .alphabet {
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .alphabet button {
+    background: #444;
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 20px;
+  }
+
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  tr.hide {
+    display: none;
+  }
+
+  mark {
+    background: yellow;
+    padding: 0 2px;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Tom Polak’s unieke verzameling van Franse uitdrukkingen</h1>
+  <h2>Doorzoekbare versie — slim één-bestand viewer</h2>
+</header>
+
+<div class="panel">
+  <input id="zoek" type="search" placeholder="Zoek in Nederlands of Frans…">
+  <div class="toolbar">
+    <button onclick="toggleContrast()">Contrast</button>
+    <button onclick="wis()">Wissen</button>
+  </div>
+</div>
+
+<div class="alphabet">
+  <script>
+    document.write(
+      [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+        .map(l => `<button onclick="scrollToLetter('${l}')">${l}</button>`)
+        .join("")
+    );
+  </script>
+</div>
+
+<!-- =============================== -->
+<!-- HIER KOMT TOMS TABEL (PLAKKEN) -->
+<!-- =============================== -->
+
+<!-- Vervang onderstaande placeholder -->
+<div id="tabelcontainer">
+  <!-- PLAK HIER DE VOLLEDIGE TABEL UIT woordenlijst_V2.html -->
+  <!-- Voorbeeld -->
+  <!-- <table> … </table> -->
+</div>
+
+<script>
+  const zoek = document.getElementById('zoek');
+
+  function wis() {
+    zoek.value = "";
+    filter();
+  }
+
+  function filter() {
+    const q = zoek.value.toLowerCase();
+    const rows = document.querySelectorAll("tbody tr");
+
+    rows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+
+      if (q === "" || text.includes(q)) {
+        row.classList.remove("hide");
+        highlight(row, q);
+      } else {
+        row.classList.add("hide");
+      }
+    });
+  }
+
+  function highlight(row, q) {
+    if (!q) {
+      row.innerHTML = row.innerHTML.replace(/<mark>|<\/mark>/g, "");
+      return;
+    }
+
+    const regex = new RegExp(`(${q})`, "gi");
+
+    [...row.children].forEach(cell => {
+      const t = cell.textContent;
+      cell.innerHTML = t.replace(regex, "<mark>$1</mark>");
+    });
+  }
+
+  zoek.addEventListener("input", () => filter());
+
+  function toggleContrast() {
+    document.body.classList.toggle("contrast-mode");
+  }
+
+  function scrollToLetter(letter) {
+    const rows = document.querySelectorAll("tbody tr:not(.hide)");
+
+    for (const r of rows) {
+      const txt = r.innerText.trim().toUpperCase();
+      if (txt.startsWith(letter)) {
+        r.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
