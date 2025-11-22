@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Woordenlijst NL–FR — V2 (embedded UI)</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;margin:0}
+    header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
+    .wrap{max-width:1100px;margin:16px auto;padding:16px}
+    h1{font-size:20px;margin:.2em 0}
+    .muted{color:#6b7280;margin:6px 0}
+    input[type="search"]{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:10px;margin:8px 0}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    thead th{text-align:left;padding:8px;border-bottom:1px solid #e5e7eb;background:#f9fafb}
+    tbody td{padding:6px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+    tbody tr.hide{display:none}
+    .meta{display:flex;gap:12px;align-items:center;margin-top:8px}
+    .small{font-size:13px;color:#374151}
+    .fallback{margin-top:12px;color:#b91c1c}
+    .loading{color:#047857}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Woordenlijst NL–FR — V2 (embedded UI)</h1>
+      <p class="muted">Deze pagina laadt de woordenlijst rechtstreeks vanaf jsDelivr en biedt lokale zoekfunctie.</p>
+      <input id="q" type="search" placeholder="Zoek in NL of FR… (typ en druk op Esc om te wissen)">
+      <div class="meta">
+        <div class="small" id="count">Laden…</div>
+        <div class="small loading" id="status"></div>
+      </div>
+      <div class="fallback" id="fallback" style="display:none"></div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <!-- De tabel wordt hier dynamisch ingevoegd -->
+    <div id="table-container"></div>
+  </main>
+
+  <script>
+    (function(){
+      const jsDelivrURL = 'https://cdn.jsdelivr.net/gh/antonnoe/tom-polak-taalarchief@main/woordenlijst_V2.html';
+      const container = document.getElementById('table-container');
+      const status = document.getElementById('status');
+      const countEl = document.getElementById('count');
+      const fallback = document.getElementById('fallback');
+      const q = document.getElementById('q');
+
+      function setStatus(text){ status.textContent = text; }
+      function setCount(n){ countEl.textContent = n + ' ingangen geladen'; }
+
+      // Safe helper to escape HTML if needed
+      function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+      // Fetch the source HTML from jsDelivr and extract the table
+      setStatus('Ophalen van woordenlijst…');
+      fetch(jsDelivrURL).then(r => {
+        if(!r.ok) throw new Error('Netwerkfout: ' + r.status);
+        return r.text();
+      }).then(text => {
+        setStatus('Verwerken…');
+        // Parse and extract the <table id="tbl"> block (or the first table)
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        let tbl = doc.querySelector('#tbl') || doc.querySelector('table');
+        if(!tbl) throw new Error('Tabel niet gevonden in bronbestand');
+
+        // Remove any scripts from the fetched table for safety
+        tbl.querySelectorAll('script').forEach(s => s.remove());
+
+        // Insert the table into this page
+        container.innerHTML = '';
+        container.appendChild(tbl);
+
+        // Wire up search/filtering
+        const tbody = tbl.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        setCount(rows.length);
+        setStatus('Klaar.');
+
+        function normalize(s){ return (s||'').toString().toLowerCase(); }
+
+        function filter(qv){
+          if(!qv){
+            rows.forEach(r => r.classList.remove('hide'));
+            setCount(rows.length);
+            return;
+          }
+          const parts = qv.trim().toLowerCase().split(/\s+/).filter(Boolean);
+          let shown = 0;
+          rows.forEach(r => {
+            const text = normalize(r.textContent);
+            const ok = parts.every(p => text.indexOf(p) !== -1);
+            if(ok){ r.classList.remove('hide'); shown++; } else { r.classList.add('hide'); }
+          });
+          setCount(shown + ' van ' + rows.length + ' getoond');
+        }
+
+        q.addEventListener('input', e => filter(e.target.value));
+        q.addEventListener('keydown', e => {
+          if(e.key === 'Escape') { q.value=''; filter(''); }
+        });
+
+        // Improve UX: focus search on load
+        q.focus();
+
+      }).catch(err => {
+        console.error(err);
+        setStatus('Fout bij laden');
+        fallback.style.display = 'block';
+        fallback.innerHTML = 'Kon de woordenlijst niet ophalen van jsDelivr: ' + escapeHtml(err.message) + '.<br>Directe link: <a href="' + jsDelivrURL + '" target="_blank">' + jsDelivrURL + '</a>';
+        countEl.textContent = '0 ingangen';
+      });
+
+    })();
+  </script>
+</body>
+</html>
