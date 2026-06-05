@@ -242,9 +242,15 @@ function detectAcronyms(frText) {
 }
 
 let m;
+let cpRemoved = 0;
+const CP_RE = /\bcp\.\s*>/;     // Tom's "comparez >"-vergelijkingsnotities
 while ((m = ROW_RE.exec(txt)) !== null) {
   const rawC1 = unescapeHtml(m[1]);
   const rawC2 = unescapeHtml(m[2]);
+
+  // "cp. >"-regels (comparez/vergelijk-voorbeelden) buiten de app-data laten.
+  // De bron in archive/source/ blijft ongewijzigd; dit is enkel curatie.
+  if (CP_RE.test(rawC1) || CP_RE.test(rawC2)) { cpRemoved++; continue; }
 
   // Welke kolom is Frans?
   const f1 = frenchness(rawC1);
@@ -338,6 +344,7 @@ Gegenereerd door \`scripts/parse.js\` uit \`archive/source/woordenlijst_V2.html\
 Reproduceerbaar met \`node scripts/parse.js\`.
 
 **Totaal ingangen:** ${entries.length}
+**Uitgesloten "cp. >"-notities (comparez/vergelijk-voorbeelden):** ${cpRemoved} (bron blijft intact in archive/source/)
 **Frans-eerst (kolommen omgewisseld t.o.v. de kop):** ${swappedCount} (${(swappedCount / entries.length * 100).toFixed(1)}%)
 **Regels zonder herkende taal (gelijkspel, kop-volgorde aangehouden):** ${nNoLang}
 **Regels zonder herkende bron:** ${nNoSource}

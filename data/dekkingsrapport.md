@@ -3,11 +3,12 @@
 Gegenereerd door `scripts/parse.js` uit `archive/source/woordenlijst_V2.html`.
 Reproduceerbaar met `node scripts/parse.js`.
 
-**Totaal ingangen:** 12227
-**Frans-eerst (kolommen omgewisseld t.o.v. de kop):** 2947 (24.1%)
+**Totaal ingangen:** 12080
+**Uitgesloten "cp. >"-notities (comparez/vergelijk-voorbeelden):** 147 (bron blijft intact in archive/source/)
+**Frans-eerst (kolommen omgewisseld t.o.v. de kop):** 2801 (23.2%)
 **Regels zonder herkende taal (gelijkspel, kop-volgorde aangehouden):** 34
-**Regels zonder herkende bron:** 6248
-**Regels zonder herkend jaar:** 6116
+**Regels zonder herkende bron:** 6101
+**Regels zonder herkend jaar:** 5969
 
 ## Belangrijkste bevinding (geverifieerd, niet aangenomen)
 De opdracht ging uit van **2004–2020**, maar de bron loopt door tot **2025**
@@ -17,7 +18,7 @@ bereik. Zie de jaartabel hieronder.
 ## Aantal per bron (ranglijst)
 | Bron | Aantal |
 |---|---:|
-| (geen) | 6248 |
+| (geen) | 6101 |
 | RTL | 3531 |
 | France 2 | 1431 |
 | TV5 Monde | 317 |
@@ -103,11 +104,11 @@ bereik. Zie de jaartabel hieronder.
 ## Vlaggen
 | Vlag | Aantal |
 |---|---:|
-| Pépites (ruw, met *) | 698 |
-| **Pépites (na ontdubbeling op fr+nl)** | **695** |
-| Afkortingen (afk) | 172 |
-| Tour de France (tdf) | 73 |
-| Domein-labels (jur./med./fin./techn./…) | 78 |
+| Pépites (ruw, met *) | 697 |
+| **Pépites (na ontdubbeling op fr+nl)** | **694** |
+| Afkortingen (afk) | 171 |
+| Tour de France (tdf) | 72 |
+| Domein-labels (jur./med./fin./techn./…) | 76 |
 | JT-bronnotitie (extrait du JT) | 93 |
 
 ## Onbekende/onverwerkte broncodes (source leeg gelaten, gelogd)
@@ -157,7 +158,7 @@ bereik. Zie de jaartabel hieronder.
 ## Filter-aanbevelingen (input voor STAP 2)
 - **Bron**: 53 herkende bronnen — ranglijst-filter is zinvol (RTL & France 2 domineren).
 - **Jaar**: volledige reeks 2002–2025 — tijdlijn-filter zinvol.
-- **Tour de France**: 73 treffers — étappe-filter zinvol.
-- **Pépites**: 695 unieke — filter opnemen.
-- **Afkortingen**: 172 treffers — detectie betekenisvol; opnemen als quickfilter. Let op vals-positieven (eigennamen in kapitaal).
+- **Tour de France**: 72 treffers — étappe-filter zinvol.
+- **Pépites**: 694 unieke — filter opnemen.
+- **Afkortingen**: 171 treffers — detectie betekenisvol; opnemen als quickfilter. Let op vals-positieven (eigennamen in kapitaal).
 - **Onderwerp (m.b.t.)**: geen dropdown; doorzoekbaar + op de kaart getoond.
