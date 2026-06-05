@@ -41,22 +41,32 @@ function png(size, draw) {
 }
 
 const YELLOW = [255, 212, 0, 255];
-const INK = [31, 34, 39, 255];
-const WHITE = [255, 255, 255, 255];
+const INK    = [31, 34, 39, 255];
+const WHITE  = [255, 255, 255, 255];
+const ROUGE  = [218, 41, 28, 255];
+const VERT   = [0, 150, 63, 255];
 
-function drawIcon(maskable) {
+// Rastert hetzelfde motief als icons/favicon.svg (64x64-coördinaten):
+// geel vlak · 4 rode stippen · witte plaat met asfalt-rand · zwart kruis · groene balk.
+// De gele rand bloeit tot de rand (veilig voor maskable).
+function drawIcon() {
+  const inRect = (u, v, x, y, w, h) => u >= x && u <= x + w && v >= y && v <= y + h;
+  const inDisc = (u, v, cx, cy, r) => (u - cx) ** 2 + (v - cy) ** 2 <= r * r;
   return (x, y, size) => {
-    const s = size;
-    const pad = maskable ? s * 0.18 : s * 0.10;     // safe-zone bij maskable
-    // gele achtergrond
+    const u = (x + 0.5) * 64 / size;
+    const v = (y + 0.5) * 64 / size;
     let col = YELLOW;
-    // witte dossard in het midden
-    const a = pad, b = s - pad;
-    if (x > a && x < b && y > a && y < b) {
-      const inner = s * 0.04;
-      if (x > a + inner && x < b - inner && y > a + inner && y < b - inner) col = WHITE;
-      else col = INK; // rand
+    // rode stippen
+    if (inDisc(u, v, 32, 10.9, 2.7) || inDisc(u, v, 32, 53.1, 2.7) ||
+        inDisc(u, v, 10.9, 32, 2.7) || inDisc(u, v, 53.1, 32, 2.7)) col = ROUGE;
+    // witte plaat met asfalt-rand
+    if (inRect(u, v, 16, 16, 32, 32)) {
+      col = (u < 17.4 || u > 46.6 || v < 17.4 || v > 46.6) ? INK : WHITE;
     }
+    // zwart kruis
+    if (inRect(u, v, 22.4, 20.5, 19.2, 5.1) || inRect(u, v, 29.1, 20.5, 5.8, 19.2)) col = INK;
+    // groene balk
+    if (inRect(u, v, 23.7, 42.6, 16.6, 3.2)) col = VERT;
     return col;
   };
 }
@@ -64,18 +74,24 @@ function drawIcon(maskable) {
 const dir = path.join(__dirname, '..', 'icons');
 fs.mkdirSync(dir, { recursive: true });
 
-// PNG-set: manifest (192/512, maskable+any), favicon-32, apple-touch-icon (180).
-fs.writeFileSync(path.join(dir, 'icon-192.png'), png(192, drawIcon(true)));
-fs.writeFileSync(path.join(dir, 'icon-512.png'), png(512, drawIcon(true)));
-fs.writeFileSync(path.join(dir, 'favicon-32.png'), png(32, drawIcon(false)));
-fs.writeFileSync(path.join(dir, 'apple-touch-icon.png'), png(180, drawIcon(false)));
+// PNG-set: manifest (192/512, maskable any), favicon-32, apple-touch-icon (180).
+const draw = drawIcon();
+fs.writeFileSync(path.join(dir, 'icon-192.png'), png(192, draw));
+fs.writeFileSync(path.join(dir, 'icon-512.png'), png(512, draw));
+fs.writeFileSync(path.join(dir, 'favicon-32.png'), png(32, draw));
+fs.writeFileSync(path.join(dir, 'apple-touch-icon.png'), png(180, draw));
 
-// Vector favicon (gele dossard met TP) — tekst, geen binær.
-const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#FFD400"/>
-  <rect x="104" y="96" width="304" height="320" rx="20" fill="#ffffff" stroke="#1f2227" stroke-width="14"/>
-  <text x="256" y="300" font-family="Oswald, Arial, sans-serif" font-size="190" font-weight="700"
-        text-anchor="middle" fill="#1f2227">TP</text>
+// Vector favicon — exact het motief uit de Claude Design-handoff.
+const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#FFD400"/>
+  <g fill="#DA291C">
+    <circle cx="32" cy="10.9" r="2.7"/><circle cx="32" cy="53.1" r="2.7"/>
+    <circle cx="10.9" cy="32" r="2.7"/><circle cx="53.1" cy="32" r="2.7"/>
+  </g>
+  <rect x="16" y="16" width="32" height="32" rx="3.2" fill="#ffffff" stroke="#1f2227" stroke-width="1.4"/>
+  <rect x="22.4" y="20.5" width="19.2" height="5.1" fill="#1f2227"/>
+  <rect x="29.1" y="20.5" width="5.8" height="19.2" fill="#1f2227"/>
+  <rect x="23.7" y="42.6" width="16.6" height="3.2" rx="1.6" fill="#00963F"/>
 </svg>
 `;
 fs.writeFileSync(path.join(dir, 'favicon.svg'), faviconSvg);

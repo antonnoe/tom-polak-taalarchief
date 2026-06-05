@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Grande Boucle de Tom — styleguide</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../styles.css">
+<link rel="icon" href="../icons/favicon.svg" type="image/svg+xml">
+
+<style>
+  /* --- alleen voor de styleguide-pagina zelf (niet voor productie) --- */
+  body { margin: 0; background: var(--gb-bg); }
+  .sg-top {
+    background: var(--gb-asphalt);
+    color: var(--gb-on-dark);
+    padding: 28px 20px;
+  }
+  .sg-top h1 {
+    margin: 0;
+    font-family: var(--gb-font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 30px;
+    color: #fff;
+  }
+  .sg-top p { margin: 6px 0 0; color: var(--gb-on-dark-soft); max-width: 60ch; }
+  .sg-swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .sg-swatch {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--gb-font-display); font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .05em; color: var(--gb-on-dark-soft);
+  }
+  .sg-swatch i {
+    width: 26px; height: 26px; border-radius: 6px; border: 1.5px solid #444;
+    display: block;
+  }
+  .sg-wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 80px; }
+  .sg-section { margin-top: 36px; }
+  .sg-section > h2 {
+    font-family: var(--gb-font-display); font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; font-size: 13px; color: var(--gb-ink-soft);
+    margin: 0 0 4px; padding-bottom: 8px; border-bottom: 2px solid var(--gb-line);
+  }
+  .sg-section > p.note { margin: 6px 0 14px; color: var(--gb-ink-soft); font-size: 14px; }
+  /* paneel licht / donker naast elkaar */
+  .sg-panels { display: grid; gap: 14px; }
+  @media (min-width: 720px) { .sg-panels { grid-template-columns: 1fr 1fr; } }
+  .sg-panel { padding: 16px; border-radius: 16px; }
+  .sg-panel--light { background: #fff; border: 2px solid var(--gb-line); }
+  .sg-panel--dark { background: var(--gb-asphalt); }
+  .sg-panel__tag {
+    font-family: var(--gb-font-display); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px;
+  }
+  .sg-panel--light .sg-panel__tag { color: var(--gb-ink-faint); }
+  .sg-panel--dark .sg-panel__tag { color: var(--gb-on-dark-soft); }
+  .sg-stack { display: grid; gap: 12px; }
+  .sg-mockup { max-width: 380px; margin: 0 auto; border-radius: 18px; overflow: hidden; border: 2px solid var(--gb-asphalt); }
+  .sg-cardlist { display: grid; gap: 12px; }
+</style>
+</head>
+<body class="gb">
+
+<header class="sg-top">
+  <h1>La Grande Boucle de Tom</h1>
+  <p>Productie-ontwerptaal in Tour de France-livrei voor Tom Polaks taalarchief (NL ⇄ FR). Plat, geel, energiek. Alle componenten hieronder volgen het class-contract uit <code>styles.css</code>.</p>
+  <div class="sg-swatches">
+    <span class="sg-swatch"><i style="background:#FFD400"></i>Jaune #FFD400</span>
+    <span class="sg-swatch"><i style="background:#DA291C"></i>Rouge #DA291C</span>
+    <span class="sg-swatch"><i style="background:#00963F"></i>Vert #00963F</span>
+    <span class="sg-swatch"><i style="background:#1f2227"></i>Asfalt #1f2227</span>
+    <span class="sg-swatch"><i style="background:#fff"></i>Wit</span>
+  </div>
+</header>
+
+<div class="sg-wrap">
+
+  <!-- ============ HEADER + DOSSARD + WORDMARK + ZOEK ============ -->
+  <section class="sg-section">
+    <h2>Header-band · dossard · wordmark · zoekbalk</h2>
+    <p class="note">De gele kop met rugnummerplaatje, wordmark en subtitel — gevolgd door de zoekbalk.</p>
+    <div class="sg-mockup">
+      <header class="gb-header">
+        <div class="gb-dossard">1</div>
+        <div>
+          <h1 class="gb-wordmark">La grande boucle <em>de Tom</em></h1>
+          <p class="gb-sub">Tom Polaks taalarchief · NL ⇄ FR</p>
+        </div>
+      </header>
+      <div style="padding:14px;background:#fff;">
+        <div class="gb-search">
+          <svg class="gb-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2" stroke-linecap="round"/></svg>
+          <input type="search" placeholder="Zoek in Nederlands of Frans…" aria-label="Zoek">
+          <button class="gb-search__clear" aria-label="Wissen">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRUI-PILLS ============ -->
+  <section class="sg-section">
+    <h2>Trui-pills (filters)</h2>
+    <p class="note">Filters als maillots: geel (alles / leider), bolletjes (pépites), groen (onderwerpen), wit (afkortingen). Actieve staat = <code>.is-active</code>.</p>
+    <div class="sg-panels">
+      <div class="sg-panel sg-panel--light">
+        <div class="sg-panel__tag">Op licht</div>
+        <div class="gb-jerseys">
+          <button class="gb-jersey gb-jersey--jaune is-active"><span class="gb-jersey__swatch"></span>Alles <span class="gb-jersey__count">2 412</span></button>
+          <button class="gb-jersey gb-jersey--pois"><span class="gb-jersey__swatch"></span>Pépites <span class="gb-jersey__count">86</span></button>
+          <button class="gb-jersey gb-jersey--vert"><span class="gb-jersey__swatch"></span>Thema's <span class="gb-jersey__count">19</span></button>
+          <button class="gb-jersey gb-jersey--afk"><span class="gb-jersey__swatch"></span>Afk. <span class="gb-jersey__count">53</span></button>
+        </div>
+      </div>
+      <div class="sg-panel sg-panel--dark">
+        <div class="sg-panel__tag">Op asfalt · alle actief</div>
+        <div class="gb-jerseys">
+          <button class="gb-jersey gb-jersey--jaune is-active"><span class="gb-jersey__swatch"></span>Alles</button>
+          <button class="gb-jersey gb-jersey--pois is-active"><span class="gb-jersey__swatch"></span>Pépites</button>
+          <button class="gb-jersey gb-jersey--vert is-active"><span class="gb-jersey__swatch"></span>Thema's</button>
+          <button class="gb-jersey gb-jersey--afk is-active"><span class="gb-jersey__swatch"></span>Afk.</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ÉTAPE DU JOUR ============ -->
+  <section class="sg-section">
+    <h2>Étape-du-jour-kaart</h2>
+    <p class="note">De uitgelichte ingang van de dag, met gele etappe-kop en km-markering.</p>
+    <div class="sg-panels">
+      <div class="sg-panel sg-panel--light">
+        <div class="sg-panel__tag">Op licht</div>
+        <article class="gb-etape">
+          <div class="gb-etape__head">
+            <span class="gb-etape__flag">Étape du jour</span>
+            <span class="gb-etape__km">14 · km 0</span>
+          </div>
+          <div class="gb-etape__body">
+            <div class="gb-card__row">
+              <div>
+                <p class="gb-fr">Avoir le cul bordé de nouilles</p>
+                <p class="gb-nl">Ongelooflijk veel geluk hebben.</p>
+              </div>
+              <button class="gb-tts" aria-label="Lees voor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linejoin="round"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <div class="gb-badges">
+              <span class="gb-chip gb-chip--pepite">Pépite</span>
+              <span class="gb-chip gb-chip--topic">Geluk</span>
+              <span class="gb-chip gb-chip--year">1998</span>
+              <span class="gb-chip gb-chip--source">Caravane</span>
+            </div>
+          </div>
+        </article>
+      </div>
+      <div class="sg-panel sg-panel--dark">
+        <div class="sg-panel__tag">Op asfalt</div>
+        <article class="gb-etape">
+          <div class="gb-etape__head">
+            <span class="gb-etape__flag">Étape du jour</span>
+            <span class="gb-etape__km">14 · km 0</span>
+          </div>
+          <div class="gb-etape__body">
+            <div class="gb-card__row">
+              <div>
+                <p class="gb-fr">Avoir le cul bordé de nouilles</p>
+                <p class="gb-nl">Ongelooflijk veel geluk hebben.</p>
+              </div>
+              <button class="gb-tts" aria-label="Lees voor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linejoin="round"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <div class="gb-badges">
+              <span class="gb-chip gb-chip--pepite">Pépite</span>
+              <span class="gb-chip gb-chip--topic">Geluk</span>
+              <span class="gb-chip gb-chip--year">1998</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REGEL-KAART + RAW + TTS ============ -->
+  <section class="sg-section">
+    <h2>Regel-kaart · toon origineel · TTS</h2>
+    <p class="note">Standaard resultaatkaart: Frans (de uitdrukking) boven, Nederlands eronder, badges, en optioneel het ruwe origineel.</p>
+    <div class="sg-cardlist sg-mockup" style="border:none;max-width:520px;display:grid;gap:12px;padding:0;">
+      <article class="gb-card">
+        <div class="gb-card__row">
+          <div>
+            <p class="gb-fr">Poser un lapin à quelqu'un</p>
+            <p class="gb-nl">Iemand laten zitten; niet komen opdagen voor een afspraak.</p>
+          </div>
+          <button class="gb-tts" aria-label="Lees voor">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linejoin="round"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="gb-badges">
+          <span class="gb-chip gb-chip--topic">Afspraken</span>
+          <span class="gb-chip gb-chip--year">2003</span>
+          <span class="gb-chip gb-chip--source">Lettre 12</span>
+        </div>
+        <button class="gb-toggle" aria-expanded="true" aria-controls="raw-1">
+          Toon origineel
+          <svg class="gb-toggle__chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="gb-raw" id="raw-1">poser un lapin (à qn) — fig., fam. — « ne pas venir au rendez-vous » — Tom, carnet n°4, p.31</div>
+      </article>
+
+      <article class="gb-card">
+        <div class="gb-card__row">
+          <div>
+            <p class="gb-fr">Les doigts dans le nez</p>
+            <p class="gb-nl">Met het grootste gemak; fluitend.</p>
+          </div>
+          <button class="gb-tts is-playing" aria-label="Bezig met voorlezen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linejoin="round"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke-linecap="round"/><path d="M19 6a8 8 0 0 1 0 12" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="gb-badges">
+          <span class="gb-chip gb-chip--pepite">Pépite</span>
+          <span class="gb-chip gb-chip--topic">Gemak</span>
+          <span class="gb-chip gb-chip--afk">fam.</span>
+        </div>
+      </article>
+
+      <article class="gb-card">
+        <div class="gb-card__row">
+          <div>
+            <p class="gb-fr">RAS — rien à signaler</p>
+            <p class="gb-nl">Niets te melden; alles in orde.</p>
+          </div>
+          <button class="gb-tts" aria-label="Lees voor">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linejoin="round"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="gb-badges">
+          <span class="gb-chip gb-chip--afk">Afkorting</span>
+          <span class="gb-chip gb-chip--year">2015</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ BADGES / CHIPS ============ -->
+  <section class="sg-section">
+    <h2>Badges / chips</h2>
+    <p class="note">Vijf varianten: bron, jaar, onderwerp, pépite, afkorting.</p>
+    <div class="sg-panels">
+      <div class="sg-panel sg-panel--light">
+        <div class="sg-panel__tag">Op licht</div>
+        <div class="gb-badges" style="margin-top:0">
+          <span class="gb-chip gb-chip--source">Bron · Caravane</span>
+          <span class="gb-chip gb-chip--year">1998</span>
+          <span class="gb-chip gb-chip--topic">Onderwerp</span>
+          <span class="gb-chip gb-chip--pepite">Pépite</span>
+          <span class="gb-chip gb-chip--afk">Afk.</span>
+        </div>
+      </div>
+      <div class="sg-panel sg-panel--dark">
+        <div class="sg-panel__tag">Op asfalt</div>
+        <div class="gb-badges" style="margin-top:0">
+          <span class="gb-chip gb-chip--source">Bron · Caravane</span>
+          <span class="gb-chip gb-chip--year">1998</span>
+          <span class="gb-chip gb-chip--topic">Onderwerp</span>
+          <span class="gb-chip gb-chip--pepite">Pépite</span>
+          <span class="gb-chip gb-chip--afk">Afk.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KLASSEMENT ============ -->
+  <section class="sg-section">
+    <h2>Klassement (ranglijst) · leider</h2>
+    <p class="note">Meest opgezochte uitdrukkingen. De leider draagt het geel (<code>--leader</code>).</p>
+    <div class="sg-panels">
+      <div class="sg-panel sg-panel--light">
+        <div class="sg-panel__tag">Op licht</div>
+        <div class="gb-classement">
+          <div class="gb-classement__row gb-classement__row--leader">
+            <div class="gb-classement__pos">1</div>
+            <div class="gb-classement__name">Avoir le cul bordé de nouilles</div>
+            <div class="gb-classement__score">312×</div>
+          </div>
+          <div class="gb-classement__row">
+            <div class="gb-classement__pos">2</div>
+            <div class="gb-classement__name">Poser un lapin</div>
+            <div class="gb-classement__score">287×</div>
+          </div>
+          <div class="gb-classement__row">
+            <div class="gb-classement__pos">3</div>
+            <div class="gb-classement__name">Les doigts dans le nez</div>
+            <div class="gb-classement__score">241×</div>
+          </div>
+          <div class="gb-classement__row">
+            <div class="gb-classement__pos">4</div>
+            <div class="gb-classement__name">Ça ne casse pas trois pattes à un canard</div>
+            <div class="gb-classement__score">198×</div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-panel sg-panel--dark">
+        <div class="sg-panel__tag">Op asfalt</div>
+        <div class="gb-classement">
+          <div class="gb-classement__row gb-classement__row--leader">
+            <div class="gb-classement__pos">1</div>
+            <div class="gb-classement__name">Avoir le cul bordé de nouilles</div>
+            <div class="gb-classement__score">312×</div>
+          </div>
+          <div class="gb-classement__row">
+            <div class="gb-classement__pos">2</div>
+            <div class="gb-classement__name">Poser un lapin</div>
+            <div class="gb-classement__score">287×</div>
+          </div>
+          <div class="gb-classement__row">
+            <div class="gb-classement__pos">3</div>
+            <div class="gb-classement__name">Les doigts dans le nez</div>
+            <div class="gb-classement__score">241×</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TIJDLIJN ============ -->
+  <section class="sg-section">
+    <h2>Jaar-tijdlijn-control</h2>
+    <p class="note">Horizontale route met km-markeringen; het actieve jaar draagt het geel.</p>
+    <div class="sg-panels">
+      <div class="sg-panel sg-panel--light" style="padding:6px 0;overflow:hidden;">
+        <div class="sg-panel__tag" style="padding:10px 16px 0">Op licht</div>
+        <nav class="gb-timeline" aria-label="Jaartal kiezen">
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">1995</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">1998</span></button>
+          <button class="gb-timeline__tick is-active"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2003</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2009</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2015</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2021</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2024</span></button>
+        </nav>
+      </div>
+      <div class="sg-panel sg-panel--dark" style="padding:6px 0;overflow:hidden;">
+        <div class="sg-panel__tag" style="padding:10px 16px 0">Op asfalt</div>
+        <nav class="gb-timeline" aria-label="Jaartal kiezen">
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">1995</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">1998</span></button>
+          <button class="gb-timeline__tick is-active"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2003</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2009</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2015</span></button>
+          <button class="gb-timeline__tick"><span class="gb-timeline__dot"></span><span class="gb-timeline__year">2021</span></button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB-BAR ============ -->
+  <section class="sg-section">
+    <h2>Tab-bar</h2>
+    <p class="note">Onderste navigatie; actieve tab draagt de gele indicator (<code>.is-active</code>).</p>
+    <div class="sg-panels">
+      <div class="sg-panel sg-panel--light" style="padding:0;overflow:hidden;">
+        <nav class="gb-tabbar">
+          <button class="gb-tab is-active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2" stroke-linecap="round"/></svg>
+            Zoeken
+          </button>
+          <button class="gb-tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18h4V9H4zM10 18h4V4h-4zM16 18h4v-6h-4z" stroke-linejoin="round"/></svg>
+            Klassement
+          </button>
+          <button class="gb-tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18" stroke-linecap="round"/><circle cx="8" cy="12" r="2.4"/><circle cx="16" cy="12" r="2.4"/></svg>
+            Tijdlijn
+          </button>
+          <button class="gb-tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.6 5.6L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.4-.4z" stroke-linejoin="round"/></svg>
+            Pépites
+          </button>
+        </nav>
+      </div>
+      <div class="sg-panel sg-panel--dark gb-dark" style="padding:0;overflow:hidden;">
+        <nav class="gb-tabbar">
+          <button class="gb-tab is-active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2" stroke-linecap="round"/></svg>
+            Zoeken
+          </button>
+          <button class="gb-tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18h4V9H4zM10 18h4V4h-4zM16 18h4v-6h-4z" stroke-linejoin="round"/></svg>
+            Klassement
+          </button>
+          <button class="gb-tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18" stroke-linecap="round"/><circle cx="8" cy="12" r="2.4"/><circle cx="16" cy="12" r="2.4"/></svg>
+            Tijdlijn
+          </button>
+          <button class="gb-tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.6 5.6L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.4-.4z" stroke-linejoin="round"/></svg>
+            Pépites
+          </button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ICONEN ============ -->
+  <section class="sg-section">
+    <h2>App-icoon (Tour-livrei)</h2>
+    <p class="note">PWA-icoon, maskable (192/512), apple-touch (180) en favicon — voor "op beginscherm zetten".</p>
+    <div style="display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;">
+      <figure style="margin:0;text-align:center;">
+        <img src="../icons/icon-512.png" alt="App-icoon 512" width="96" height="96" style="border-radius:20px;border:2px solid var(--gb-line);display:block;">
+        <figcaption style="font-size:12px;color:var(--gb-ink-soft);margin-top:6px;">icon-512 · maskable</figcaption>
+      </figure>
+      <figure style="margin:0;text-align:center;">
+        <img src="../icons/apple-touch-icon.png" alt="Apple touch icon" width="60" height="60" style="border-radius:13px;border:2px solid var(--gb-line);display:block;">
+        <figcaption style="font-size:12px;color:var(--gb-ink-soft);margin-top:6px;">apple-touch · 180</figcaption>
+      </figure>
+      <figure style="margin:0;text-align:center;">
+        <img src="../icons/favicon-32.png" alt="Favicon" width="32" height="32" style="display:block;image-rendering:auto;">
+        <figcaption style="font-size:12px;color:var(--gb-ink-soft);margin-top:6px;">favicon · 32</figcaption>
+      </figure>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

@@ -30,13 +30,16 @@
 
   const ttsOK = 'speechSynthesis' in window;
 
-  // Inline luidspreker-SVG (design: .gb-tts svg { 22x22 })
+  // Inline luidspreker-SVG (exact uit de styleguide)
   const SPEAKER_SVG =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
-    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    '<path d="M11 5 6 9H3v6h3l5 4z"></path>' +
-    '<path d="M15.5 8.5a5 5 0 0 1 0 7"></path>' +
-    '<path d="M18.5 5.5a9 9 0 0 1 0 13"></path></svg>';
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+    '<path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linejoin="round"></path>' +
+    '<path d="M16.5 8.5a5 5 0 0 1 0 7" stroke-linecap="round"></path></svg>';
+  // Chevron voor .gb-toggle (exact uit de styleguide)
+  const CHEV_SVG =
+    '<svg class="gb-toggle__chev" viewBox="0 0 24 24" width="14" height="14" fill="none" ' +
+    'stroke="currentColor" stroke-width="2.4" aria-hidden="true">' +
+    '<path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
   // ---- Data laden ----
   fetch('data/taalarchief.json')
@@ -203,20 +206,20 @@
   function badgesFor(e, extra) {
     const b = document.createElement('div');
     b.className = 'gb-badges';
-    if (e.source) b.appendChild(chip('gb-chip--source', e.source));
+    if (e.flags.pepite) b.appendChild(chip('gb-chip--pepite', 'Pépite'));
+    if (e.topic) b.appendChild(chip('gb-chip--topic', e.topic));
     if (e.year) b.appendChild(chip('gb-chip--year', e.year));
-    if (e.topic) b.appendChild(chip('gb-chip--topic', 'm.b.t. ' + e.topic));
-    if (e.flags.pepite) b.appendChild(chip('gb-chip--pepite', 'pépite'));
-    if (e.flags.afk) b.appendChild(chip('gb-chip--afk', 'afko'));
+    if (e.source) b.appendChild(chip('gb-chip--source', e.source));
+    if (e.flags.afk) b.appendChild(chip('gb-chip--afk', 'Afk.'));
+    if (e.flags.domein) b.appendChild(chip('gb-chip--afk', e.flags.domein + '.'));
     if (extra && e.flags.tdf) b.appendChild(chip('gb-chip--topic', 'Tour'));
-    if (extra && e.flags.domein) b.appendChild(chip('gb-chip--source', e.flags.domein + '.'));
     return b;
   }
 
   // ---- Kaart ----
   function cardEl(e) {
     const card = document.createElement('article');
-    card.className = 'gb-card gb-card--link';
+    card.className = 'gb-card';
     card.setAttribute('role', 'listitem');
 
     const row = document.createElement('div');
@@ -238,14 +241,17 @@
 
     // "toon origineel" -> toont .gb-raw inline (helper .gb-toggle)
     const isOpen = expanded.has(e.id);
+    const rawId = 'raw-' + e.id;
     const toggle = document.createElement('button');
     toggle.className = 'gb-toggle';
     toggle.type = 'button';
     toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    toggle.innerHTML = 'toon origineel <span class="gb-toggle__chev" aria-hidden="true">▾</span>';
+    toggle.setAttribute('aria-controls', rawId);
+    toggle.innerHTML = 'Toon origineel ' + CHEV_SVG;
 
     const raw = document.createElement('div');
     raw.className = 'gb-raw';
+    raw.id = rawId;
     raw.textContent = e.raw;
     raw.hidden = !isOpen;
 
@@ -303,14 +309,14 @@
     const src = pool.length > 30 ? pool : ALL;
     const e = src[dayHash() % src.length];
 
-    const box = document.createElement('div');
+    const box = document.createElement('article');
     box.className = 'gb-etape';
 
     const head = document.createElement('div');
     head.className = 'gb-etape__head';
     const flag = document.createElement('span');
     flag.className = 'gb-etape__flag';
-    flag.textContent = '🚩 Étape du jour';
+    flag.textContent = 'Étape du jour';
     const km = document.createElement('span');
     km.className = 'gb-etape__km';
     km.textContent = (e.source || '—') + (e.year ? ' · ' + e.year : '');
