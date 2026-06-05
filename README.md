@@ -72,7 +72,7 @@ De HTML gebruikt een vast **class-contract** (zie `index.html`). Vervang
 `styles.css` en de bestanden in `icons/`; raak de class-namen niet aan.
 
 ## Licentie
-© de erven/rechthebbenden van Tom Polak. Gepubliceerd onder
+© Tom Polak. Gepubliceerd onder
 **CC BY-NC-ND 4.0** (zie [`LICENSE`](LICENSE)).
 
 <!-- TODO Anton: persoonlijke tekst over Tom (ook in de Prologue-sectie van de app) -->
