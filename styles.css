@@ -733,17 +733,18 @@ a.gb-card:hover,
    (bron/jaar) en de Prologue-prozatekst. Hergebruikt de design-tokens; geen
    enkele component-regel hierboven wordt overschreven.
 ============================================================================= */
-html, body { height: 100%; }
+html, body { height: auto; }
+/* Eén doorlopende body-scroll — geen geneste scroll-container, geen 100vh-val.
+   De header blijft klein-sticky; de tabbar plakt onderaan; al het andere
+   (controls, étape, resultatenlijst, overige views) scrolt als één pagina. */
 body.gb {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  overflow: hidden;
+  min-height: 100%;
+  /* ruimte zodat de laatste kaarten niet achter de sticky tabbar verdwijnen */
+  padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px));
 }
 
-/* Controls-band onder de header (zoek + truien + filters) */
+/* Controls-band onder de header (zoek + truien + filters) — normaal in de flow */
 .gb-controls {
-  flex: none;
   display: grid;
   gap: var(--gb-3);
   padding: var(--gb-3) var(--gb-4);
@@ -785,23 +786,20 @@ body.gb {
   color: var(--gb-ink-soft);
 }
 
-/* Main + views */
-.gb-main { flex: 1; min-height: 0; position: relative; }
-.gb-view { position: absolute; inset: 0; display: none; }
-.gb-view.is-active { display: flex; flex-direction: column; min-height: 0; }
-/* views die zelf scrollen (alles behalve het peloton) */
-#view-classement, #view-timeline, #view-prologue { overflow-y: auto; padding: var(--gb-4); }
+/* Main + views — alles in de normale flow; alleen de actieve view is zichtbaar */
+.gb-main { display: block; }
+.gb-view { display: none; }
+.gb-view.is-active { display: block; }
+#view-classement, #view-timeline, #view-prologue { padding: var(--gb-4); }
 
-/* Peloton: étape vast bovenaan, lijst scrolt */
+/* Peloton: étape boven, dan de (gevirtualiseerde) lijst — geen eigen scroll */
 #view-peloton { padding: 0; }
-#etapeWrap { flex: none; padding: var(--gb-4) var(--gb-4) 0; }
+#etapeWrap { padding: var(--gb-4) var(--gb-4) 0; }
 
-/* Gevirtualiseerde scroller */
-.gb-viewport {
-  flex: 1; min-height: 0; position: relative;
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: var(--gb-4);
-}
+/* Virtualisatie-venster: GEEN scroll-container meer. Het is een relatief
+   blok waarvan de hoogte door #spacer wordt bepaald; #list wordt met
+   translateY meegeschoven op basis van de window-scroll (zie app.js). */
+.gb-viewport { position: relative; margin: var(--gb-3) 0 var(--gb-6); }
 #spacer { position: relative; width: 1px; }
 #list { position: absolute; left: var(--gb-4); right: var(--gb-4); top: 0; will-change: transform; }
 .gb-empty {

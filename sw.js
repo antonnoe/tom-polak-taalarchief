@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const CACHE_VERSION = 'v4';                 // hoog dit op bij elke data-/asset-wijziging
+const CACHE_VERSION = 'v5';                 // hoog dit op bij elke data-/asset-wijziging
 const CACHE = 'grande-boucle-' + CACHE_VERSION;
 const SHELL = [
   '.',

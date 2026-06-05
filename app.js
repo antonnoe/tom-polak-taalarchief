@@ -148,11 +148,16 @@
     applyFilters();
   }
 
-  // ---- Virtualisatie (windowing met translateY; tolereert variabele hoogte) ----
+  // ---- Virtualisatie (windowing met translateY op de window-scroll) ----
+  function isPelotonActive() {
+    const v = document.getElementById('view-peloton');
+    return v && v.classList.contains('is-active');
+  }
+
   function layout() {
     expanded.clear();
     spacer.style.height = (view.length * ROW_H) + 'px';
-    viewport.scrollTop = 0;
+    window.scrollTo(0, 0);     // nieuwe resultaten: terug naar boven
     render(true);
     if (!rowMeasured) measureFromRender();
   }
@@ -173,9 +178,12 @@
 
   let lastStart = -1, lastEnd = -1;
   function render(force) {
-    const st = viewport.scrollTop;
-    const vh = viewport.clientHeight || 600;
-    let start = Math.floor(st / ROW_H) - BUFFER;
+    // Eén body-scroll: bepaal positie t.o.v. de window-viewport, niet t.o.v.
+    // een geneste scroller. rect.top is de window-y van de lijst-top.
+    if (!isPelotonActive()) return;
+    const rect = viewport.getBoundingClientRect();
+    const vh = window.innerHeight || 600;
+    let start = Math.floor(-rect.top / ROW_H) - BUFFER;
     let count = Math.ceil(vh / ROW_H) + BUFFER * 2;
     start = Math.max(0, start);
     let end = Math.min(view.length, start + count);
@@ -409,7 +417,8 @@
       t.classList.toggle('is-active', on);
       t.setAttribute('aria-selected', on ? 'true' : 'false');
     });
-    if (name === 'peloton') { lastStart = -1; render(true); }
+    if (name === 'peloton') { window.scrollTo(0, 0); lastStart = -1; render(true); }
+    else window.scrollTo(0, 0);
   }
 
   // ---- Events ----
@@ -432,7 +441,8 @@
       b.addEventListener('click', () => setJersey(b.dataset.jersey)));
     document.querySelectorAll('.gb-tab').forEach((t) =>
       t.addEventListener('click', () => switchView(t.dataset.view)));
-    viewport.addEventListener('scroll', () => render(false), { passive: true });
+    // Eén body-scroll: virtualisatie luistert naar de WINDOW-scroll.
+    window.addEventListener('scroll', () => render(false), { passive: true });
     window.addEventListener('resize', () => { lastStart = -1; render(true); });
   }
 
