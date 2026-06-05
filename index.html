@@ -7,48 +7,59 @@
 <meta name="description" content="La Grande Boucle de Tom — een feestelijk eerbetoon aan het Frans-Nederlandse taalarchief van Tom Polak. ~12.000 uitdrukkingen uit radio en krant, 2004–2025.">
 <title>La Grande Boucle de Tom</title>
 
-<!-- HANDOFF-LINKBLOK — vervang dit door het <link>-blok bovenaan de styles.css
-     van Claude Design (Oswald + de geleverde favicons). Tot die er is: baseline. -->
+<!-- Linkblok uit de Claude Design-handoff (bovenaan styles.css) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-
-<!-- styles.css = baseline; Claude Design vervangt dit later (class-contract is leidend) -->
-<link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="gb">
 
 <!-- ===================== HEADER ===================== -->
 <header class="gb-header">
   <div class="gb-dossard" aria-hidden="true">TP</div>
   <div>
-    <div class="gb-wordmark">La Grande Boucle de Tom</div>
-    <div class="gb-sub">Het taalarchief van Tom Polak · radio &amp; krant · 2004–2025</div>
+    <h1 class="gb-wordmark">La Grande Boucle <em>de Tom</em></h1>
+    <p class="gb-sub">Het taalarchief van Tom Polak · radio &amp; krant · 2004–2025</p>
   </div>
 </header>
 
-<!-- ===================== SEARCH + JERSEYS ===================== -->
+<!-- ===================== CONTROLS ===================== -->
 <div class="gb-controls">
-  <input id="q" class="gb-search" type="search" inputmode="search"
-         placeholder="Zoek in Frans, Nederlands, onderwerp…" aria-label="Zoeken">
+  <div class="gb-search">
+    <svg class="gb-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input id="q" class="gb-search__input" type="search" inputmode="search"
+           placeholder="Zoek in Frans, Nederlands, onderwerp…" aria-label="Zoeken">
+    <button id="qClear" class="gb-search__clear" type="button" hidden aria-label="Zoekopdracht wissen">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line>
+      </svg>
+    </button>
+  </div>
 
   <div class="gb-jerseys" role="group" aria-label="Snelfilters (truien)">
     <button class="gb-jersey gb-jersey--jaune is-active" data-jersey="all" aria-pressed="true">
-      <span class="gb-jersey__ico">🟡</span> Alles
+      <span class="gb-jersey__swatch" aria-hidden="true"></span> Alles
+      <span class="gb-jersey__count" id="cnt-all"></span>
     </button>
     <button class="gb-jersey gb-jersey--pois" data-jersey="tdf" aria-pressed="false">
-      <span class="gb-jersey__ico">🔴</span> Tour
+      <span class="gb-jersey__swatch" aria-hidden="true"></span> Tour
+      <span class="gb-jersey__count" id="cnt-tdf"></span>
     </button>
     <button class="gb-jersey gb-jersey--vert" data-jersey="pepite" aria-pressed="false">
-      <span class="gb-jersey__ico">🟢</span> Pépites
+      <span class="gb-jersey__swatch" aria-hidden="true"></span> Pépites
+      <span class="gb-jersey__count" id="cnt-pepite"></span>
     </button>
     <button class="gb-jersey gb-jersey--afk" data-jersey="afk" aria-pressed="false">
-      <span class="gb-jersey__ico">⚪</span> Afko's
+      <span class="gb-jersey__swatch" aria-hidden="true"></span> Afko's
+      <span class="gb-jersey__count" id="cnt-afk"></span>
     </button>
   </div>
 
@@ -70,14 +81,14 @@
       <button id="resetFilters" class="gb-reset" type="button">Filters wissen</button>
     </div>
   </details>
+
   <div id="count" class="gb-count" aria-live="polite"></div>
 </div>
 
 <!-- ===================== VIEWS ===================== -->
-<main>
-  <!-- Le Peloton: de lijst -->
+<main class="gb-main">
+  <!-- Le Peloton -->
   <section id="view-peloton" class="gb-view is-active">
-    <!-- Étape du jour -->
     <div id="etapeWrap"></div>
     <div id="viewport" class="gb-viewport" role="list" aria-label="Uitdrukkingen">
       <div id="spacer"></div>
@@ -85,7 +96,7 @@
     </div>
   </section>
 
-  <!-- Classement: ranglijst van bronnen -->
+  <!-- Classement -->
   <section id="view-classement" class="gb-view">
     <h2 class="gb-vtitle">Classement des sources</h2>
     <p class="gb-vlede">De ranglijst van Tom’s bronnen — wie leverde de meeste etappes?</p>
@@ -94,12 +105,12 @@
 
   <!-- Tijdlijn -->
   <section id="view-timeline" class="gb-view">
-    <h2 class="gb-vtitle">La chronologie · 2004–2025</h2>
+    <h2 class="gb-vtitle">La chronologie</h2>
     <p class="gb-vlede">Tik een jaar aan om naar dat seizoen te filteren.</p>
     <div id="timeline" class="gb-timeline"></div>
   </section>
 
-  <!-- Le Prologue: à propos -->
+  <!-- Le Prologue -->
   <section id="view-prologue" class="gb-view">
     <h2 class="gb-vtitle">Le Prologue</h2>
     <div class="gb-prose">
@@ -114,8 +125,8 @@
 
       <p>De bronnen lezen als een peloton: <b>RTL</b> en <b>France 2</b> voeren het
       klassement aan, met <b>TV5 Monde</b>, <b>Aujourd’hui en France</b>,
-      <b>Le Figaro</b> en tientallen anderen in het wiel. De <span class="gb-chip gb-chip--pepite">pépites</span>
-      zijn Tom’s eigen favorieten — de juweeltjes, gemarkeerd met een sterretje.</p>
+      <b>Le Figaro</b> en tientallen anderen in het wiel. De pépites zijn Tom’s
+      eigen favorieten — de juweeltjes, gemarkeerd met een sterretje.</p>
 
       <!-- TODO Anton: persoonlijke tekst over Tom -->
 
@@ -126,20 +137,30 @@
   </section>
 </main>
 
-<!-- ===================== DETAIL DIALOG (toon origineel) ===================== -->
-<dialog id="detail" class="gb-detail">
-  <form method="dialog">
-    <button class="gb-detail__close" aria-label="Sluiten">✕</button>
-  </form>
-  <div id="detailBody"></div>
-</dialog>
-
 <!-- ===================== TABBAR ===================== -->
-<nav class="gb-tabbar" role="tablist">
-  <button class="gb-tab is-active" data-view="peloton">🚴 Peloton</button>
-  <button class="gb-tab" data-view="classement">🏆 Classement</button>
-  <button class="gb-tab" data-view="timeline">📅 Tijdlijn</button>
-  <button class="gb-tab" data-view="prologue">ℹ️ Prologue</button>
+<nav class="gb-tabbar" role="tablist" aria-label="Hoofdnavigatie">
+  <button class="gb-tab is-active" data-view="peloton" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="5.5" cy="17.5" r="3.5"></circle><circle cx="18.5" cy="17.5" r="3.5"></circle>
+      <path d="M5.5 17.5 9 8h5l3 6"></path><path d="M9 8 11 5h3"></path>
+    </svg>Peloton
+  </button>
+  <button class="gb-tab" data-view="classement" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 4h12v3a6 6 0 0 1-12 0z"></path><path d="M6 6H3v1a3 3 0 0 0 3 3"></path>
+      <path d="M18 6h3v1a3 3 0 0 1-3 3"></path><path d="M9 20h6M12 13v7"></path>
+    </svg>Classement
+  </button>
+  <button class="gb-tab" data-view="timeline" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18M8 2v4M16 2v4"></path>
+    </svg>Tijdlijn
+  </button>
+  <button class="gb-tab" data-view="prologue" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle><path d="M12 16v-5M12 8h.01"></path>
+    </svg>Prologue
+  </button>
 </nav>
 
 <script src="app.js" defer></script>

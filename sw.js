@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const CACHE_VERSION = 'v2';                 // hoog dit op bij elke data-/asset-wijziging
+const CACHE_VERSION = 'v3';                 // hoog dit op bij elke data-/asset-wijziging
 const CACHE = 'grande-boucle-' + CACHE_VERSION;
 const SHELL = [
   '.',
@@ -13,7 +13,9 @@ const SHELL = [
   'styles.css',
   'manifest.json',
   'data/taalarchief.json',
-  'icons/icon.svg',
+  'icons/favicon.svg',
+  'icons/favicon-32.png',
+  'icons/apple-touch-icon.png',
   'icons/icon-192.png',
   'icons/icon-512.png',
 ];

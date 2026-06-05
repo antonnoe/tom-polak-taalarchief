@@ -63,8 +63,21 @@ function drawIcon(maskable) {
 
 const dir = path.join(__dirname, '..', 'icons');
 fs.mkdirSync(dir, { recursive: true });
-for (const sz of [192, 512]) {
-  fs.writeFileSync(path.join(dir, `icon-${sz}.png`), png(sz, drawIcon(false)));
-  fs.writeFileSync(path.join(dir, `icon-${sz}-maskable.png`), png(sz, drawIcon(true)));
-}
-console.log('OK — placeholder iconen geschreven naar icons/');
+
+// PNG-set: manifest (192/512, maskable+any), favicon-32, apple-touch-icon (180).
+fs.writeFileSync(path.join(dir, 'icon-192.png'), png(192, drawIcon(true)));
+fs.writeFileSync(path.join(dir, 'icon-512.png'), png(512, drawIcon(true)));
+fs.writeFileSync(path.join(dir, 'favicon-32.png'), png(32, drawIcon(false)));
+fs.writeFileSync(path.join(dir, 'apple-touch-icon.png'), png(180, drawIcon(false)));
+
+// Vector favicon (gele dossard met TP) — tekst, geen binær.
+const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#FFD400"/>
+  <rect x="104" y="96" width="304" height="320" rx="20" fill="#ffffff" stroke="#1f2227" stroke-width="14"/>
+  <text x="256" y="300" font-family="Oswald, Arial, sans-serif" font-size="190" font-weight="700"
+        text-anchor="middle" fill="#1f2227">TP</text>
+</svg>
+`;
+fs.writeFileSync(path.join(dir, 'favicon.svg'), faviconSvg);
+
+console.log('OK — placeholder iconen geschreven naar icons/ (icon-192/512, favicon-32, apple-touch-icon, favicon.svg)');

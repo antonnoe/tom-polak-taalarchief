@@ -1,248 +1,827 @@
-/* =========================================================================
-   styles.css — BASELINE / PLACEHOLDER
-   Werkende, mobile-first Tour-de-France-stijl zodat de app nu al testbaar is.
-   Claude Design vervangt dit later; de class-namen (class-contract) blijven.
-   ========================================================================= */
+/* =============================================================================
+   La Grande Boucle de Tom — productie-ontwerptaal (Tour de France-livrei)
+   Visuele laag voor het taalarchief van Tom Polak (NL ⇄ FR).
+
+   NIET Anton's huisstijl. Geel hoofdkleur, bolletjes-rood, vert-groen, asfalt.
+   Plat, geen kleurverlopen, sentence case, tap-targets >= 44px, mobile-first.
+
+   KOPPELEN IN index.html (door Claude Code):
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="styles.css">
+   <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+   <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+   (manifest verwijst naar icons/icon-192.png en icons/icon-512.png, purpose "maskable any")
+
+   Class-contract (gedeeld met Claude Code — exact deze namen):
+   .gb-header .gb-dossard .gb-wordmark .gb-sub | .gb-search |
+   .gb-etape .gb-card .gb-fr .gb-nl .gb-raw .gb-tts |
+   .gb-badges .gb-chip + .gb-chip--source/--year/--topic/--pepite/--afk |
+   .gb-jersey + .gb-jersey--jaune/--pois/--vert/--afk (.is-active) |
+   .gb-classement .gb-classement__row .gb-classement__row--leader |
+   .gb-timeline | .gb-tabbar .gb-tab (.is-active)
+============================================================================= */
 
 :root {
-  --jaune: #FFD400;      /* gele trui */
-  --pois: #e4322b;       /* bolletjestrui (rood) */
-  --vert: #2ecc71;       /* groene trui */
-  --ink: #1f2227;
-  --paper: #fbfbf9;
-  --card: #ffffff;
-  --line: #e7e7e2;
-  --muted: #6b7280;
-  --shadow: 0 1px 3px rgba(0,0,0,.08);
-  --tab-h: 60px;
+  /* ---- Palet ------------------------------------------------------------ */
+  --gb-jaune:        #FFD400;   /* maillot jaune — hoofdkleur                */
+  --gb-jaune-deep:   #E6BE00;   /* donkerder geel voor randen/hover         */
+  --gb-rouge:        #DA291C;   /* bolletjes-rood — pépites / pois          */
+  --gb-vert:         #00963F;   /* maillot vert — accent / topics           */
+  --gb-asphalt:      #1f2227;   /* asfalt — tekst & lijnen                  */
+  --gb-asphalt-2:    #2c3038;   /* zachter asfalt                           */
+  --gb-white:        #ffffff;
+
+  /* ---- Afgeleide oppervlakken (licht) ---------------------------------- */
+  --gb-bg:           #f4f5f6;   /* app-achtergrond                          */
+  --gb-surface:      #ffffff;   /* kaarten                                  */
+  --gb-ink:          var(--gb-asphalt);
+  --gb-ink-soft:     #5b626c;   /* gedempte tekst                          */
+  --gb-ink-faint:    #8b919b;
+  --gb-line:         #e2e4e7;   /* haarlijn                                 */
+  --gb-line-strong:  var(--gb-asphalt);
+
+  /* ---- Tinten op asfalt (donkere oppervlakken) ------------------------- */
+  --gb-on-dark:      #f3f4f5;
+  --gb-on-dark-soft: #aab0b8;
+  --gb-line-on-dark: #3a3f47;
+
+  /* ---- Typografie ------------------------------------------------------- */
+  --gb-font-display: "Oswald", "Segoe UI", system-ui, sans-serif;   /* koppen, labels, klassement */
+  --gb-font-body:    system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --gb-fs-xs:  12px;
+  --gb-fs-sm:  14px;
+  --gb-fs-md:  16px;   /* basis lopende tekst                              */
+  --gb-fs-lg:  19px;
+  --gb-fs-xl:  24px;
+  --gb-fs-2xl: 30px;
+  --gb-fs-3xl: 40px;
+
+  --gb-track-label: 0.06em;   /* letterspacing voor uppercase labels        */
+
+  /* ---- Ruimte (8pt-raster) --------------------------------------------- */
+  --gb-1: 4px;
+  --gb-2: 8px;
+  --gb-3: 12px;
+  --gb-4: 16px;
+  --gb-5: 20px;
+  --gb-6: 24px;
+  --gb-8: 32px;
+  --gb-10: 40px;
+
+  /* ---- Randen / vorm ---------------------------------------------------- */
+  --gb-radius:    14px;
+  --gb-radius-sm: 10px;
+  --gb-radius-lg: 18px;
+  --gb-pill:      999px;
+  --gb-border:    2px;
+
+  /* ---- Platte "hard offset" schaduw (geen blur, energieke livrei) ------- */
+  --gb-pop:    3px 3px 0 0 var(--gb-asphalt);
+  --gb-pop-sm: 2px 2px 0 0 var(--gb-asphalt);
+
+  /* ---- Tap-target minimum ---------------------------------------------- */
+  --gb-tap: 44px;
+
+  /* ---- Bolletjes-patroon (pois / pépite) — platte stippen, geen verloop - */
+  --gb-pois-size: 16px;
 }
 
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
-body {
-  font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: var(--ink);
-  background: var(--paper);
-  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
+/* =============================================================================
+   Basis
+============================================================================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+.gb-app,
+body.gb {
+  margin: 0;
+  background: var(--gb-bg);
+  color: var(--gb-ink);
+  font-family: var(--gb-font-body);
+  font-size: var(--gb-fs-md);
+  line-height: 1.5;
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* -------------------------- HEADER -------------------------- */
+/* Donker oppervlak-scope: zet op een sectie om componenten op asfalt te tonen */
+.gb-dark {
+  background: var(--gb-asphalt);
+  color: var(--gb-on-dark);
+}
+
+/* Gedeelde focus-stijl (toegankelijk, zichtbaar op geel én asfalt) */
+.gb-app :focus-visible,
+.gb :focus-visible,
+.gb-focusable:focus-visible {
+  outline: 3px solid var(--gb-vert);
+  outline-offset: 2px;
+  border-radius: var(--gb-radius-sm);
+}
+
+/* Uppercase label-helper (Oswald) */
+.gb-label {
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--gb-track-label);
+  font-size: var(--gb-fs-xs);
+  line-height: 1;
+}
+
+/* =============================================================================
+   Header-band + dossard + wordmark
+============================================================================= */
 .gb-header {
-  position: sticky; top: 0; z-index: 30;
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px calc(10px) 14px;
-  padding-top: calc(10px + env(safe-area-inset-top));
-  background: linear-gradient(180deg, var(--jaune), #ffe24d);
-  border-bottom: 3px solid var(--ink);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--gb-4);
+  padding: var(--gb-4);
+  background: var(--gb-jaune);
+  color: var(--gb-asphalt);
+  /* Bolletjes-rand onderaan = knipoog naar het bergtruitje */
+  border-bottom: var(--gb-border) solid var(--gb-asphalt);
 }
+
+/* Dossard = rugnummerplaatje van de renner */
 .gb-dossard {
-  flex: 0 0 auto;
-  width: 46px; height: 46px;
-  display: grid; place-items: center;
-  background: #fff; color: var(--ink);
-  border: 2px solid var(--ink); border-radius: 8px;
-  font-family: "Oswald", sans-serif; font-weight: 700; font-size: 20px;
-  box-shadow: var(--shadow);
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 60px;
+  background: var(--gb-white);
+  color: var(--gb-asphalt);
+  border: var(--gb-border) solid var(--gb-asphalt);
+  border-radius: 6px;
+  box-shadow: var(--gb-pop-sm);
+  font-family: var(--gb-font-display);
+  font-weight: 700;
+  font-size: var(--gb-fs-2xl);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
-.gb-wordmark { font-family: "Oswald", sans-serif; font-weight: 700; font-size: 21px; line-height: 1.05; letter-spacing: .01em; text-transform: uppercase; }
-.gb-sub { font-size: 12px; color: #4a4a44; margin-top: 2px; }
 
-/* -------------------------- CONTROLS -------------------------- */
-.gb-controls {
-  position: sticky; top: 72px; z-index: 20;
-  background: var(--paper);
-  padding: 10px 14px 6px;
-  border-bottom: 1px solid var(--line);
+.gb-wordmark {
+  margin: 0;
+  font-family: var(--gb-font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: var(--gb-fs-xl);
+  line-height: 1.02;
+  color: var(--gb-asphalt);
 }
+/* "de Tom" / accentwoord in de wordmark mag rood */
+.gb-wordmark em {
+  font-style: normal;
+  color: var(--gb-rouge);
+}
+
+.gb-sub {
+  margin: 2px 0 0;
+  font-family: var(--gb-font-body);
+  font-size: var(--gb-fs-sm);
+  font-weight: 500;
+  color: var(--gb-asphalt-2);
+}
+
+/* =============================================================================
+   Zoekbalk
+============================================================================= */
 .gb-search {
-  width: 100%; padding: 12px 14px;
-  border: 2px solid var(--ink); border-radius: 12px;
-  font-size: 16px; background: #fff;
-}
-.gb-jerseys { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; }
-.gb-jersey {
-  flex: 0 0 auto;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 12px; border-radius: 999px;
-  border: 2px solid var(--ink); background: #fff;
-  font-size: 14px; font-weight: 600; cursor: pointer;
-}
-.gb-jersey__ico { font-size: 13px; }
-.gb-jersey.is-active { color: #fff; }
-.gb-jersey--jaune.is-active { background: var(--jaune); color: var(--ink); }
-.gb-jersey--pois.is-active  { background: var(--pois); }
-.gb-jersey--vert.is-active  { background: var(--vert); }
-.gb-jersey--afk.is-active   { background: var(--ink); }
-
-.gb-morefilters { margin-top: 8px; font-size: 14px; }
-.gb-morefilters summary { cursor: pointer; color: var(--muted); padding: 4px 0; }
-.gb-filterbody { display: grid; gap: 10px; padding: 8px 0; }
-.gb-field { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
-.gb-field select, .gb-field input[type=range] { width: 100%; }
-.gb-field select { padding: 8px; border: 1px solid var(--line); border-radius: 8px; font-size: 15px; }
-.gb-reset { justify-self: start; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; }
-.gb-count { font-size: 12px; color: var(--muted); padding: 6px 0 2px; }
-
-/* -------------------------- VIEWS -------------------------- */
-.gb-view { display: none; }
-.gb-view.is-active { display: block; }
-.gb-vtitle { font-family: "Oswald", sans-serif; text-transform: uppercase; letter-spacing: .01em; margin: 16px 14px 4px; font-size: 22px; }
-.gb-vlede { margin: 0 14px 12px; color: var(--muted); font-size: 14px; }
-
-/* -------------------------- VIEWPORT (virtual list) -------------------------- */
-.gb-viewport {
   position: relative;
-  height: calc(100vh - 230px - var(--tab-h));
-  min-height: 320px;
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 0 12px;
+  display: flex;
+  align-items: center;
 }
-#spacer { position: relative; width: 1px; }
-#list { position: absolute; left: 0; right: 0; top: 0; }
-
-/* -------------------------- ÉTAPE DU JOUR -------------------------- */
-.gb-etape {
-  margin: 12px; padding: 14px;
-  background: linear-gradient(135deg, #fff, #fff8d6);
-  border: 2px solid var(--ink); border-radius: 14px;
-  box-shadow: var(--shadow); cursor: pointer;
+.gb-search__icon {
+  position: absolute;
+  left: var(--gb-3);
+  width: 22px;
+  height: 22px;
+  color: var(--gb-ink-soft);
+  pointer-events: none;
 }
-.gb-etape__head { font-weight: 800; font-size: 13px; letter-spacing: .04em; color: var(--pois); margin-bottom: 6px; }
-
-/* -------------------------- CARD -------------------------- */
-.gb-card {
-  position: relative;
-  height: 124px; overflow: hidden;          /* vaste hoogte ⇒ stabiele virtualisatie */
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--jaune);
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  box-shadow: var(--shadow);
+.gb-search input,
+.gb-search__input {
+  width: 100%;
+  min-height: var(--gb-tap);
+  padding: 0 var(--gb-4) 0 44px;
+  font-family: var(--gb-font-body);
+  font-size: var(--gb-fs-md);
+  color: var(--gb-ink);
+  background: var(--gb-surface);
+  border: var(--gb-border) solid var(--gb-asphalt);
+  border-radius: var(--gb-pill);
+  appearance: none;
+}
+.gb-search input::placeholder { color: var(--gb-ink-faint); }
+.gb-search input:focus,
+.gb-search__input:focus {
+  outline: none;
+  border-color: var(--gb-asphalt);
+  box-shadow: 0 0 0 3px var(--gb-jaune);
+}
+/* Wis-knop */
+.gb-search__clear {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: var(--gb-pill);
+  background: transparent;
+  color: var(--gb-ink-soft);
   cursor: pointer;
 }
-.gb-fr {
-  font-weight: 700; font-size: 15px; line-height: 1.3;
-  display: flex; align-items: flex-start; gap: 6px;
-}
-/* In de kaart: Frans op max 2 regels, luidsprekertje rechtsboven (uit de flow) */
-.gb-card .gb-fr {
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; padding-right: 26px;
-}
-.gb-nl {
-  color: #374151; font-size: 14px; margin-top: 3px; line-height: 1.3;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.gb-tts {
-  flex: 0 0 auto; margin-left: auto;
-  border: none; background: transparent; cursor: pointer;
-  font-size: 16px; line-height: 1; padding: 2px 4px;
-}
-.gb-card .gb-tts { position: absolute; top: 6px; right: 6px; margin: 0; }
-/* actieve uitspraak: pulserend luidsprekertje */
-.gb-tts.is-playing { animation: gb-pulse .8s ease-in-out infinite; }
-@keyframes gb-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.25); opacity: .6; } }
-.gb-card .gb-badges { flex-wrap: nowrap; overflow: hidden; position: absolute; left: 12px; right: 12px; bottom: 10px; }
-.gb-raw {
-  white-space: pre-wrap; word-break: break-word;
-  background: #f5f5f0; border: 1px dashed var(--line); border-radius: 8px;
-  padding: 10px; font-size: 13px; color: #333; margin: 0;
-  font-family: ui-monospace, Menlo, Consolas, monospace;
-}
-.gb-rawlabel { font-size: 12px; color: var(--muted); margin: 12px 0 4px; }
+.gb-search__clear:hover { background: var(--gb-line); color: var(--gb-ink); }
 
-/* -------------------------- BADGES / CHIPS -------------------------- */
-.gb-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
-.gb-chip {
-  font-size: 11px; font-weight: 600; line-height: 1;
-  padding: 4px 8px; border-radius: 999px;
-  border: 1px solid var(--line); background: #f3f4f6; color: #374151;
+/* =============================================================================
+   Étape-du-jour-kaart (uitgelichte ingang) + regel-kaart
+============================================================================= */
+.gb-etape {
+  background: var(--gb-surface);
+  border: var(--gb-border) solid var(--gb-asphalt);
+  border-radius: var(--gb-radius);
+  box-shadow: var(--gb-pop);
+  overflow: hidden;
+}
+/* Gele kop met etappe-markering */
+.gb-etape__head {
+  display: flex;
+  align-items: center;
+  gap: var(--gb-2);
+  padding: var(--gb-2) var(--gb-3);
+  background: var(--gb-jaune);
+  border-bottom: var(--gb-border) solid var(--gb-asphalt);
+}
+.gb-etape__flag {
+  font-family: var(--gb-font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--gb-track-label);
+  font-size: var(--gb-fs-xs);
+  color: var(--gb-asphalt);
   white-space: nowrap;
 }
-.gb-chip--source { background: #e8effc; border-color: #cdddfa; color: #1e40af; }
-.gb-chip--year   { background: #eef2f7; color: #334155; }
-.gb-chip--topic  { background: #f1f5f0; color: #3f6212; }
-.gb-chip--pepite { background: var(--vert); border-color: var(--vert); color: #fff; }
-.gb-chip--afk    { background: var(--ink); border-color: var(--ink); color: #fff; }
+.gb-etape__km {
+  margin-left: auto;
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: var(--gb-fs-xs);
+  color: var(--gb-asphalt-2);
+  font-variant-numeric: tabular-nums;
+}
+.gb-etape__body { padding: var(--gb-4); }
+
+/* Standaard regel-kaart */
+.gb-card {
+  position: relative;
+  display: block;
+  padding: var(--gb-4);
+  background: var(--gb-surface);
+  border: var(--gb-border) solid var(--gb-line);
+  border-radius: var(--gb-radius);
+}
+.gb-card + .gb-card { margin-top: var(--gb-3); }
+a.gb-card,
+.gb-card--link { cursor: pointer; transition: border-color .12s ease, transform .12s ease; }
+a.gb-card:hover,
+.gb-card--link:hover { border-color: var(--gb-asphalt); }
+
+/* Frans = de uitdrukking (de pépite). Nederlands = de betekenis. */
+.gb-fr {
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: var(--gb-fs-lg);
+  line-height: 1.2;
+  color: var(--gb-ink);
+  text-wrap: pretty;
+}
+.gb-nl {
+  margin-top: var(--gb-1);
+  font-family: var(--gb-font-body);
+  font-size: var(--gb-fs-md);
+  color: var(--gb-ink-soft);
+  text-wrap: pretty;
+}
+
+/* Origineel/ruwe bron — getoond via "toon origineel" */
+.gb-raw {
+  margin-top: var(--gb-3);
+  padding: var(--gb-2) var(--gb-3);
+  background: var(--gb-bg);
+  border-left: 3px solid var(--gb-jaune-deep);
+  border-radius: 0 var(--gb-radius-sm) var(--gb-radius-sm) 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: var(--gb-fs-sm);
+  color: var(--gb-ink-soft);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.gb-raw[hidden] { display: none; }
+
+/* "toon origineel"-schakelaar (tekstknop) */
 .gb-toggle {
-  margin-left: auto; font-size: 11px; font-weight: 600;
-  border: 1px solid var(--line); background: #fff; color: var(--muted);
-  padding: 4px 8px; border-radius: 999px; cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  color: var(--gb-vert);
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: var(--gb-fs-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--gb-track-label);
+  cursor: pointer;
 }
-.gb-toggle:hover { border-color: var(--ink); color: var(--ink); }
-.gb-empty { padding: 28px 14px; text-align: center; color: var(--muted); }
+.gb-toggle:hover { text-decoration: underline; }
+.gb-toggle__chev { transition: transform .15s ease; }
+.gb-toggle[aria-expanded="true"] .gb-toggle__chev { transform: rotate(180deg); }
 
-/* -------------------------- CLASSEMENT -------------------------- */
-.gb-classement { padding: 0 12px 16px; display: grid; gap: 6px; }
+/* TTS-knopje — rond luidsprekerknopje, tap-target >= 44px */
+.gb-tts {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--gb-tap);
+  height: var(--gb-tap);
+  border: var(--gb-border) solid var(--gb-asphalt);
+  border-radius: var(--gb-pill);
+  background: var(--gb-white);
+  color: var(--gb-asphalt);
+  cursor: pointer;
+  transition: background .12s ease, transform .08s ease;
+}
+.gb-tts:hover { background: var(--gb-jaune); }
+.gb-tts:active { transform: translateY(1px); }
+.gb-tts svg { width: 22px; height: 22px; }
+.gb-tts.is-playing { background: var(--gb-vert); border-color: var(--gb-vert); color: var(--gb-white); }
+
+/* Handige rij: fr-tekst links, tts rechts */
+.gb-card__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gb-3);
+}
+
+/* =============================================================================
+   Badges / chips
+============================================================================= */
+.gb-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gb-2);
+  margin-top: var(--gb-3);
+}
+.gb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 26px;
+  padding: 0 var(--gb-2);
+  border: 1.5px solid var(--gb-line-strong);
+  border-radius: var(--gb-pill);
+  background: var(--gb-white);
+  color: var(--gb-asphalt);
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: var(--gb-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.gb-chip::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: var(--gb-pill);
+  background: currentColor;
+  opacity: .55;
+}
+
+/* Bron — neutraal/asfalt */
+.gb-chip--source {
+  border-color: var(--gb-line);
+  color: var(--gb-ink-soft);
+}
+/* Jaar — asfalt gevuld, tabular */
+.gb-chip--year {
+  background: var(--gb-asphalt);
+  border-color: var(--gb-asphalt);
+  color: var(--gb-white);
+  font-variant-numeric: tabular-nums;
+}
+.gb-chip--year::before { background: var(--gb-jaune); opacity: 1; }
+/* Onderwerp — groen (vert) */
+.gb-chip--topic {
+  background: var(--gb-vert);
+  border-color: var(--gb-vert);
+  color: var(--gb-white);
+}
+.gb-chip--topic::before { background: var(--gb-white); opacity: 1; }
+/* Pépite — bolletjes-rood, het "gevonden goud" */
+.gb-chip--pepite {
+  background: var(--gb-rouge);
+  border-color: var(--gb-rouge);
+  color: var(--gb-white);
+  padding-left: 7px;
+}
+.gb-chip--pepite::before {
+  background: var(--gb-white);
+  opacity: 1;
+}
+/* Afkorting */
+.gb-chip--afk {
+  background: var(--gb-white);
+  border-color: var(--gb-asphalt);
+  color: var(--gb-asphalt);
+}
+.gb-chip--afk::before { display: none; }
+
+/* =============================================================================
+   Trui-pills (filters als maillots)
+============================================================================= */
+.gb-jerseys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gb-2);
+}
+.gb-jersey {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gb-2);
+  min-height: var(--gb-tap);
+  padding: 0 var(--gb-4) 0 var(--gb-2);
+  border: var(--gb-border) solid var(--gb-asphalt);
+  border-radius: var(--gb-pill);
+  background: var(--gb-white);
+  color: var(--gb-asphalt);
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: var(--gb-fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+.gb-jersey:active { transform: translateY(1px); }
+/* Trui-icoon = klein kleurplaatje dat de maillot voorstelt */
+.gb-jersey__swatch {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--gb-pill);
+  border: 1.5px solid var(--gb-asphalt);
+  background: var(--gb-white);
+}
+.gb-jersey__count {
+  font-variant-numeric: tabular-nums;
+  color: var(--gb-ink-soft);
+  font-weight: 500;
+}
+
+/* Maillot jaune */
+.gb-jersey--jaune .gb-jersey__swatch { background: var(--gb-jaune); }
+.gb-jersey--jaune.is-active {
+  background: var(--gb-jaune);
+  box-shadow: var(--gb-pop-sm);
+}
+/* Bolletjestrui (pois) — wit met rode bolletjes */
+.gb-jersey--pois .gb-jersey__swatch {
+  background-color: var(--gb-white);
+  background-image:
+    radial-gradient(var(--gb-rouge) 30%, transparent 31%),
+    radial-gradient(var(--gb-rouge) 30%, transparent 31%);
+  background-size: 9px 9px;
+  background-position: 0 0, 4.5px 4.5px;
+}
+.gb-jersey--pois.is-active {
+  background-color: #fff;
+  background-image:
+    radial-gradient(var(--gb-rouge) 18%, transparent 19%),
+    radial-gradient(var(--gb-rouge) 18%, transparent 19%);
+  background-size: var(--gb-pois-size) var(--gb-pois-size);
+  background-position: 0 0, calc(var(--gb-pois-size) / 2) calc(var(--gb-pois-size) / 2);
+  box-shadow: var(--gb-pop-sm);
+}
+/* Maillot vert */
+.gb-jersey--vert .gb-jersey__swatch { background: var(--gb-vert); }
+.gb-jersey--vert.is-active {
+  background: var(--gb-vert);
+  color: var(--gb-white);
+  box-shadow: var(--gb-pop-sm);
+}
+.gb-jersey--vert.is-active .gb-jersey__count { color: rgba(255,255,255,.8); }
+/* Afkortingen-trui — maillot blanc */
+.gb-jersey--afk .gb-jersey__swatch { background: var(--gb-white); }
+.gb-jersey--afk.is-active {
+  background: var(--gb-asphalt);
+  color: var(--gb-white);
+  box-shadow: var(--gb-pop-sm);
+}
+.gb-jersey--afk.is-active .gb-jersey__count { color: rgba(255,255,255,.8); }
+
+/* =============================================================================
+   Klassement (ranglijst) + leider-highlight (maillot jaune)
+============================================================================= */
+.gb-classement {
+  background: var(--gb-surface);
+  border: var(--gb-border) solid var(--gb-asphalt);
+  border-radius: var(--gb-radius);
+  overflow: hidden;
+}
 .gb-classement__row {
-  display: grid; grid-template-columns: 28px 1fr 70px;
-  align-items: center; gap: 8px;
-  width: 100%; text-align: left;
-  background: #fff; border: 1px solid var(--line); border-radius: 8px;
-  padding: 8px 10px; cursor: pointer; position: relative;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: var(--gb-3);
+  min-height: var(--gb-tap);
+  padding: var(--gb-2) var(--gb-3);
+  border-top: 1px solid var(--gb-line);
 }
-.gb-classement__row--leader { border-color: var(--jaune); border-left: 4px solid var(--jaune); }
-.gb-classement__rank { font-weight: 800; color: var(--muted); }
-.gb-classement__name { font-weight: 600; font-size: 14px; }
-.gb-classement__bar {
-  position: absolute; left: 0; bottom: 0; height: 3px; background: var(--jaune);
-  border-radius: 0 0 0 8px;
+.gb-classement__row:first-child { border-top: none; }
+/* Positie-nummer (Oswald, tabular) */
+.gb-classement__pos {
+  font-family: var(--gb-font-display);
+  font-weight: 700;
+  font-size: var(--gb-fs-lg);
+  color: var(--gb-ink-soft);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
-.gb-classement__count { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+.gb-classement__name {
+  font-family: var(--gb-font-body);
+  font-size: var(--gb-fs-md);
+  color: var(--gb-ink);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gb-classement__score {
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: var(--gb-fs-sm);
+  color: var(--gb-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+/* Leider draagt het geel */
+.gb-classement__row--leader {
+  background: var(--gb-jaune);
+  border-top-color: var(--gb-asphalt);
+}
+.gb-classement__row--leader + .gb-classement__row { border-top-color: var(--gb-asphalt); }
+.gb-classement__row--leader .gb-classement__pos,
+.gb-classement__row--leader .gb-classement__name,
+.gb-classement__row--leader .gb-classement__score { color: var(--gb-asphalt); }
+.gb-classement__row--leader .gb-classement__pos { font-size: var(--gb-fs-xl); }
 
-/* -------------------------- TIMELINE -------------------------- */
+/* =============================================================================
+   Jaar-tijdlijn-control (route met km-markeringen)
+============================================================================= */
 .gb-timeline {
-  display: flex; align-items: flex-end; gap: 4px;
-  height: 200px; padding: 0 12px 8px; overflow-x: auto;
+  position: relative;
+  display: flex;
+  gap: var(--gb-2);
+  padding: var(--gb-4) var(--gb-3) var(--gb-3);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
 }
-.gb-timeline__col {
-  flex: 1 0 26px; height: 100%;
-  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-  background: none; border: none; cursor: pointer; gap: 4px;
+/* De "weg" — doorlopende lijn achter de markeringen */
+.gb-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 22px;
+  height: 3px;
+  background: var(--gb-asphalt);
+  opacity: .18;
 }
-.gb-timeline__bar { width: 70%; background: var(--pois); border-radius: 4px 4px 0 0; min-height: 3px; }
-.gb-timeline__lbl { font-size: 10px; color: var(--muted); }
+.gb-timeline__tick {
+  position: relative;
+  flex: none;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 0 2px;
+  min-width: 52px;
+  scroll-snap-align: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+/* Markering = punt op de route */
+.gb-timeline__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--gb-pill);
+  background: var(--gb-white);
+  border: var(--gb-border) solid var(--gb-asphalt);
+}
+.gb-timeline__year {
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: var(--gb-fs-sm);
+  color: var(--gb-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.gb-timeline__tick.is-active .gb-timeline__dot {
+  background: var(--gb-jaune);
+  width: 18px;
+  height: 18px;
+  box-shadow: var(--gb-pop-sm);
+}
+.gb-timeline__tick.is-active .gb-timeline__year {
+  color: var(--gb-asphalt);
+  font-weight: 700;
+}
 
-/* -------------------------- PROSE / PROLOGUE -------------------------- */
-.gb-prose { padding: 4px 16px 24px; max-width: 680px; line-height: 1.6; font-size: 15px; }
-.gb-prose .gb-credits { font-size: 12px; color: var(--muted); margin-top: 20px; }
-
-/* -------------------------- DETAIL DIALOG -------------------------- */
-.gb-detail {
-  border: none; border-radius: 16px 16px 0 0; padding: 18px 16px 24px;
-  width: 100%; max-width: 560px;
-  position: fixed; bottom: 0; top: auto; margin: 0 auto;
-  box-shadow: 0 -4px 24px rgba(0,0,0,.2);
-}
-.gb-detail::backdrop { background: rgba(0,0,0,.4); }
-.gb-detail__close {
-  position: absolute; right: 12px; top: 12px;
-  border: none; background: #f0f0ec; border-radius: 999px;
-  width: 32px; height: 32px; font-size: 16px; cursor: pointer;
-}
-.gb-detail__fr { font-weight: 800; font-size: 18px; margin: 6px 40px 6px 0; display: flex; gap: 8px; }
-.gb-detail__nl { font-size: 15px; color: #374151; margin: 0 0 6px; }
-
-/* -------------------------- TABBAR -------------------------- */
+/* =============================================================================
+   Tab-bar (onderaan, mobiel)
+============================================================================= */
 .gb-tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-  display: flex; height: var(--tab-h);
-  padding-bottom: env(safe-area-inset-bottom);
-  background: #fff; border-top: 2px solid var(--ink);
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: stretch;
+  background: var(--gb-surface);
+  border-top: var(--gb-border) solid var(--gb-asphalt);
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .gb-tab {
-  flex: 1; border: none; background: none; cursor: pointer;
-  font-size: 12px; font-weight: 600; color: var(--muted);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 56px;
+  padding: 6px 2px;
+  border: none;
+  background: transparent;
+  color: var(--gb-ink-soft);
+  font-family: var(--gb-font-display);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
 }
-.gb-tab.is-active { color: var(--ink); box-shadow: inset 0 3px 0 var(--jaune); }
+.gb-tab svg { width: 24px; height: 24px; }
+/* Actieve tab: gele indicator-balk bovenaan + asfalt-tekst */
+.gb-tab::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 28px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: transparent;
+}
+.gb-tab { position: relative; }
+.gb-tab.is-active { color: var(--gb-asphalt); }
+.gb-tab.is-active::before { background: var(--gb-jaune); }
 
-/* -------------------------- DESKTOP -------------------------- */
+/* Tab-bar werkt ook op asfalt-scope (donkere variant) */
+.gb-dark .gb-tabbar {
+  background: var(--gb-asphalt-2);
+  border-top-color: var(--gb-jaune);
+}
+.gb-dark .gb-tab { color: var(--gb-on-dark-soft); }
+.gb-dark .gb-tab.is-active { color: var(--gb-white); }
+
+/* =============================================================================
+   Kleine helpers voor donkere oppervlakken
+   (kaarten blijven wit en poppen vanzelf; tekst-only elementen aanpassen)
+============================================================================= */
+.gb-dark .gb-sub { color: var(--gb-on-dark-soft); }
+.gb-dark .gb-timeline::before { background: var(--gb-on-dark); opacity: .25; }
+.gb-dark .gb-timeline__year { color: var(--gb-on-dark-soft); }
+.gb-dark .gb-timeline__dot { border-color: var(--gb-on-dark); }
+
+/* =============================================================================
+   Reduced motion
+============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* =============================================================================
+   ▼▼▼  APP-LAYOUT-GLUE — toegevoegd door Claude Code  ▼▼▼
+   Niet-component scaffolding die de handoff (bewust) niet dekt: de app-shell,
+   de gevirtualiseerde scroller, het wisselen van views, de extra filters
+   (bron/jaar) en de Prologue-prozatekst. Hergebruikt de design-tokens; geen
+   enkele component-regel hierboven wordt overschreven.
+============================================================================= */
+html, body { height: 100%; }
+body.gb {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Controls-band onder de header (zoek + truien + filters) */
+.gb-controls {
+  flex: none;
+  display: grid;
+  gap: var(--gb-3);
+  padding: var(--gb-3) var(--gb-4);
+  background: var(--gb-bg);
+  border-bottom: 1px solid var(--gb-line);
+}
+.gb-jerseys { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* "Meer filters" (bron + jaar) — gestyled met de design-tokens */
+.gb-morefilters { font-family: var(--gb-font-body); }
+.gb-morefilters > summary {
+  list-style: none; cursor: pointer;
+  font-family: var(--gb-font-display); font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--gb-track-label);
+  font-size: var(--gb-fs-xs); color: var(--gb-ink-soft);
+  min-height: 32px; display: flex; align-items: center; gap: 6px;
+}
+.gb-morefilters > summary::-webkit-details-marker { display: none; }
+.gb-filterbody { display: grid; gap: var(--gb-3); padding-top: var(--gb-3); }
+.gb-field { display: grid; gap: 4px; }
+.gb-field > span { font-size: var(--gb-fs-xs); color: var(--gb-ink-soft); }
+.gb-field select {
+  min-height: var(--gb-tap); padding: 0 var(--gb-3);
+  border: var(--gb-border) solid var(--gb-asphalt); border-radius: var(--gb-radius-sm);
+  background: var(--gb-surface); color: var(--gb-ink);
+  font-family: var(--gb-font-body); font-size: var(--gb-fs-md);
+}
+.gb-field input[type="range"] { width: 100%; accent-color: var(--gb-rouge); }
+.gb-reset {
+  justify-self: start; min-height: 36px; padding: 0 var(--gb-3);
+  border: var(--gb-border) solid var(--gb-asphalt); border-radius: var(--gb-pill);
+  background: var(--gb-surface); color: var(--gb-asphalt);
+  font-family: var(--gb-font-display); font-weight: 600; text-transform: uppercase;
+  letter-spacing: var(--gb-track-label); font-size: var(--gb-fs-xs); cursor: pointer;
+}
+.gb-count {
+  font-family: var(--gb-font-display); font-weight: 600; text-transform: uppercase;
+  letter-spacing: var(--gb-track-label); font-size: var(--gb-fs-xs);
+  color: var(--gb-ink-soft);
+}
+
+/* Main + views */
+.gb-main { flex: 1; min-height: 0; position: relative; }
+.gb-view { position: absolute; inset: 0; display: none; }
+.gb-view.is-active { display: flex; flex-direction: column; min-height: 0; }
+/* views die zelf scrollen (alles behalve het peloton) */
+#view-classement, #view-timeline, #view-prologue { overflow-y: auto; padding: var(--gb-4); }
+
+/* Peloton: étape vast bovenaan, lijst scrolt */
+#view-peloton { padding: 0; }
+#etapeWrap { flex: none; padding: var(--gb-4) var(--gb-4) 0; }
+
+/* Gevirtualiseerde scroller */
+.gb-viewport {
+  flex: 1; min-height: 0; position: relative;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: var(--gb-4);
+}
+#spacer { position: relative; width: 1px; }
+#list { position: absolute; left: var(--gb-4); right: var(--gb-4); top: 0; will-change: transform; }
+.gb-empty {
+  padding: var(--gb-10) var(--gb-4); text-align: center; color: var(--gb-ink-soft);
+}
+
+/* View-titels + lede + proza (Prologue) */
+.gb-vtitle {
+  font-family: var(--gb-font-display); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.01em; font-size: var(--gb-fs-xl); margin: 0 0 var(--gb-1);
+}
+.gb-vlede { margin: 0 0 var(--gb-4); color: var(--gb-ink-soft); font-size: var(--gb-fs-sm); }
+.gb-prose { max-width: 64ch; line-height: 1.6; }
+.gb-prose p { margin: 0 0 var(--gb-4); }
+.gb-prose .gb-credits { font-size: var(--gb-fs-sm); color: var(--gb-ink-faint); }
+.gb-prose code { font-size: .9em; }
+
+/* In de lijst: étape-kaart als klikbaar regel-item bovenaan */
+#etapeWrap .gb-etape { cursor: pointer; }
+
 @media (min-width: 760px) {
-  .gb-controls { top: 70px; }
-  #list { display: block; }
   .gb-prose { margin: 0 auto; }
 }

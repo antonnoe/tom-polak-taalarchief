@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#FFD400"/>
+  <rect x="104" y="96" width="304" height="320" rx="20" fill="#ffffff" stroke="#1f2227" stroke-width="14"/>
+  <text x="256" y="300" font-family="Oswald, Arial, sans-serif" font-size="190" font-weight="700"
+        text-anchor="middle" fill="#1f2227">TP</text>
+</svg>
