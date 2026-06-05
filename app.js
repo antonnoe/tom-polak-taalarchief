@@ -192,15 +192,8 @@
     const fr = document.createElement('div');
     fr.className = 'gb-fr';
     fr.append(document.createTextNode(e.fr));
-    if (ttsOK && e.fr) {
-      const sp = document.createElement('button');
-      sp.className = 'gb-tts';
-      sp.type = 'button';
-      sp.setAttribute('aria-label', 'Spreek Frans uit');
-      sp.textContent = '🔊';
-      sp.addEventListener('click', (ev) => { ev.stopPropagation(); speak(e.fr); });
-      fr.appendChild(sp);
-    }
+    const sp = ttsButton(e.fr);
+    if (sp) fr.appendChild(sp);
 
     const nl = document.createElement('div');
     nl.className = 'gb-nl';
@@ -215,9 +208,10 @@
     if (e.flags.afk) badges.appendChild(chip('gb-chip--afk', 'afko'));
 
     const orig = document.createElement('button');
-    orig.className = 'gb-origbtn';
+    orig.className = 'gb-toggle';
     orig.type = 'button';
     orig.textContent = 'toon origineel';
+    orig.setAttribute('aria-label', 'Toon de originele regel');
     orig.addEventListener('click', (ev) => { ev.stopPropagation(); openDetail(e); });
     badges.appendChild(orig);
 
@@ -232,14 +226,8 @@
     const fr = document.createElement('p');
     fr.className = 'gb-detail__fr';
     fr.textContent = e.fr;
-    if (ttsOK && e.fr) {
-      const sp = document.createElement('button');
-      sp.className = 'gb-tts';
-      sp.type = 'button'; sp.textContent = '🔊';
-      sp.setAttribute('aria-label', 'Spreek Frans uit');
-      sp.addEventListener('click', () => speak(e.fr));
-      fr.appendChild(sp);
-    }
+    const sp = ttsButton(e.fr);
+    if (sp) fr.appendChild(sp);
     const nl = document.createElement('p');
     nl.className = 'gb-detail__nl';
     nl.textContent = e.nl;
@@ -267,12 +255,36 @@
   }
 
   // ---- TTS ----
-  function speak(text) {
+  // Maakt een luidsprekerknopje met .is-playing-staat. Geeft null terug als
+  // de browser geen speechSynthesis ondersteunt (knop wordt dan niet getoond).
+  function ttsButton(text) {
+    if (!ttsOK || !text) return null;
+    const btn = document.createElement('button');
+    btn.className = 'gb-tts';
+    btn.type = 'button';
+    btn.textContent = '🔊';
+    btn.setAttribute('aria-label', 'Spreek Frans uit');
+    btn.addEventListener('click', (ev) => { ev.stopPropagation(); speak(text, btn); });
+    return btn;
+  }
+
+  function clearPlaying() {
+    document.querySelectorAll('.gb-tts.is-playing')
+      .forEach((b) => b.classList.remove('is-playing'));
+  }
+
+  function speak(text, btn) {
     if (!ttsOK) return;
     speechSynthesis.cancel();
+    clearPlaying();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'fr-FR';
     u.rate = 0.95;
+    if (btn) {
+      u.onstart = () => btn.classList.add('is-playing');
+      u.onend = () => btn.classList.remove('is-playing');
+      u.onerror = () => btn.classList.remove('is-playing');
+    }
     speechSynthesis.speak(u);
   }
 
@@ -300,13 +312,8 @@
     const fr = document.createElement('div');
     fr.className = 'gb-fr';
     fr.append(document.createTextNode(e.fr));
-    if (ttsOK && e.fr) {
-      const sp = document.createElement('button');
-      sp.className = 'gb-tts'; sp.type = 'button'; sp.textContent = '🔊';
-      sp.setAttribute('aria-label', 'Spreek Frans uit');
-      sp.addEventListener('click', (ev) => { ev.stopPropagation(); speak(e.fr); });
-      fr.appendChild(sp);
-    }
+    const sp = ttsButton(e.fr);
+    if (sp) fr.appendChild(sp);
     const nl = document.createElement('div');
     nl.className = 'gb-nl';
     nl.textContent = e.nl;
@@ -405,6 +412,7 @@
     viewport.addEventListener('scroll', render, { passive: true });
     window.addEventListener('resize', () => { lastStart = -1; render(); });
     detail.addEventListener('click', (e) => { if (e.target === detail) detail.close(); });
+    detail.addEventListener('close', () => { if (ttsOK) speechSynthesis.cancel(); clearPlaying(); });
   }
 
   // ---- Service worker ----
