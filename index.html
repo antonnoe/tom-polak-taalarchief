@@ -163,6 +163,19 @@
   </button>
 </nav>
 
+<!-- ===================== INSTALL-OVERLAY (eerste keer) ===================== -->
+<div id="install" class="gb-install" hidden>
+  <div class="gb-install__card" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+    <img class="gb-install__icon" src="icons/icon-512.png" alt="" width="88" height="88">
+    <p class="gb-install__flag">Bienvenue · welkom</p>
+    <h2 id="installTitle" class="gb-install__title">Zet de Grande Boucle op je telefoon</h2>
+    <p class="gb-install__lede">Installeer de app voor één-tik-toegang en gebruik offline — geen appstore nodig.</p>
+    <button id="installBtn" class="gb-install__cta" type="button">Plaats op telefoon</button>
+    <p id="installHint" class="gb-install__hint" hidden></p>
+    <button id="installLater" class="gb-install__later" type="button">Misschien later</button>
+  </div>
+</div>
+
 <script src="app.js" defer></script>
 </body>
 </html>

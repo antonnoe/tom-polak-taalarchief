@@ -41,11 +41,24 @@
     'stroke="currentColor" stroke-width="2.4" aria-hidden="true">' +
     '<path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
+  // beforeinstallprompt kan vroeg vuren — vang 'm meteen op.
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('installBtn');
+    const hint = document.getElementById('installHint');
+    if (btn) btn.hidden = false;
+    if (hint) hint.hidden = true;     // echte prompt beschikbaar ⇒ geen tekst-uitleg
+  });
+
   // ---- Data laden ----
   fetch('data/taalarchief.json')
     .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((d) => { META = d.meta; ALL = d.entries; boot(); })
     .catch((err) => { countEl.textContent = 'Kon de data niet laden (' + err.message + ').'; });
+
+  initInstall();
 
   function boot() {
     buildSourceSelect();
@@ -444,6 +457,69 @@
     // Eén body-scroll: virtualisatie luistert naar de WINDOW-scroll.
     window.addEventListener('scroll', () => render(false), { passive: true });
     window.addEventListener('resize', () => { lastStart = -1; render(true); });
+  }
+
+  // ---- Install-overlay (eerste keer): "Plaats op telefoon" ----
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+  }
+  function isIOS() {
+    const ua = navigator.userAgent || '';
+    const iDevice = /iPhone|iPad|iPod/i.test(ua);
+    // iPadOS doet zich voor als Mac met touch
+    const iPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+    return iDevice || iPadOS;
+  }
+
+  function initInstall() {
+    const overlay = document.getElementById('install');
+    if (!overlay) return;
+    const btn = document.getElementById('installBtn');
+    const hint = document.getElementById('installHint');
+    const later = document.getElementById('installLater');
+
+    // Niet tonen als al geïnstalleerd of eerder weggeklikt.
+    let dismissed = false;
+    try { dismissed = localStorage.getItem('gb-install-dismissed') === '1'; } catch (e) {}
+    if (isStandalone() || dismissed) return;
+
+    function close(remember) {
+      overlay.hidden = true;
+      if (remember) { try { localStorage.setItem('gb-install-dismissed', '1'); } catch (e) {} }
+    }
+
+    if (isIOS()) {
+      // iOS Safari kent geen beforeinstallprompt → toon instructie.
+      if (btn) btn.hidden = true;
+      if (hint) {
+        hint.hidden = false;
+        hint.innerHTML = 'Tik op <b>Deel</b> (het vierkantje met pijltje omhoog) en kies ' +
+          '<b>“Zet op beginscherm”</b>.';
+      }
+    } else if (!deferredPrompt && btn) {
+      // Nog geen prompt ontvangen: knop blijft, fallback-uitleg bij tik.
+      btn.hidden = false;
+    }
+
+    if (btn) btn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        try { await deferredPrompt.userChoice; } catch (e) {}
+        deferredPrompt = null;
+        close(true);
+      } else if (hint) {
+        hint.hidden = false;
+        hint.innerHTML = 'Open het browsermenu (⋮) en kies <b>“App installeren”</b> ' +
+          'of <b>“Toevoegen aan beginscherm”</b>.';
+      }
+    });
+
+    if (later) later.addEventListener('click', () => close(true));
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(true); });
+    window.addEventListener('appinstalled', () => close(true));
+
+    overlay.hidden = false;
   }
 
   // ---- Service worker ----

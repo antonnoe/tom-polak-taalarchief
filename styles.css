@@ -823,3 +823,82 @@ body.gb {
 @media (min-width: 760px) {
   .gb-prose { margin: 0 auto; }
 }
+
+/* =============================================================================
+   Install-overlay (eerste keer) — "Plaats op telefoon"
+   In de Tour-livrei; gebruikt de design-tokens.
+============================================================================= */
+.gb-install {
+  position: fixed; inset: 0; z-index: 60;
+  display: grid; place-items: center;
+  padding: var(--gb-4);
+  padding-bottom: calc(var(--gb-4) + env(safe-area-inset-bottom, 0px));
+  background: rgba(31, 34, 39, .55);
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+}
+.gb-install[hidden] { display: none; }
+.gb-install__card {
+  width: 100%; max-width: 360px;
+  background: var(--gb-surface);
+  border: var(--gb-border) solid var(--gb-asphalt);
+  border-radius: var(--gb-radius-lg);
+  box-shadow: var(--gb-pop);
+  padding: var(--gb-6) var(--gb-5) var(--gb-5);
+  text-align: center;
+}
+.gb-install__icon {
+  width: 88px; height: 88px;
+  border-radius: 20px;
+  border: var(--gb-border) solid var(--gb-asphalt);
+  box-shadow: var(--gb-pop-sm);
+}
+.gb-install__flag {
+  margin: var(--gb-4) 0 var(--gb-1);
+  font-family: var(--gb-font-display); font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--gb-track-label);
+  font-size: var(--gb-fs-xs); color: var(--gb-rouge);
+}
+.gb-install__title {
+  margin: 0 0 var(--gb-2);
+  font-family: var(--gb-font-display); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.01em; line-height: 1.05;
+  font-size: var(--gb-fs-xl); color: var(--gb-ink);
+}
+.gb-install__lede {
+  margin: 0 0 var(--gb-5);
+  font-size: var(--gb-fs-sm); color: var(--gb-ink-soft);
+}
+.gb-install__cta {
+  width: 100%; min-height: var(--gb-tap);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--gb-2);
+  padding: 0 var(--gb-5);
+  background: var(--gb-jaune); color: var(--gb-asphalt);
+  border: var(--gb-border) solid var(--gb-asphalt); border-radius: var(--gb-pill);
+  box-shadow: var(--gb-pop-sm);
+  font-family: var(--gb-font-display); font-weight: 700;
+  text-transform: uppercase; letter-spacing: var(--gb-track-label);
+  font-size: var(--gb-fs-md); cursor: pointer;
+  transition: transform .08s ease;
+}
+.gb-install__cta:active { transform: translateY(1px); }
+.gb-install__cta[hidden] { display: none; }
+.gb-install__hint {
+  margin: var(--gb-3) 0 0;
+  font-size: var(--gb-fs-sm); color: var(--gb-ink); line-height: 1.5;
+  text-align: left;
+  background: var(--gb-bg);
+  border-left: 3px solid var(--gb-jaune-deep);
+  border-radius: 0 var(--gb-radius-sm) var(--gb-radius-sm) 0;
+  padding: var(--gb-3);
+}
+.gb-install__hint[hidden] { display: none; }
+.gb-install__hint b { color: var(--gb-asphalt); }
+.gb-install__later {
+  margin: var(--gb-4) 0 0;
+  border: none; background: transparent; cursor: pointer;
+  font-family: var(--gb-font-display); font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--gb-track-label);
+  font-size: var(--gb-fs-xs); color: var(--gb-ink-soft);
+  min-height: 36px; padding: 0 var(--gb-3);
+}
+.gb-install__later:hover { color: var(--gb-ink); }
