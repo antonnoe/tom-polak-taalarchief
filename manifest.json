@@ -1,0 +1,19 @@
+{
+  "name": "La Grande Boucle de Tom",
+  "short_name": "Grande Boucle",
+  "description": "Een feestelijk eerbetoon aan het Frans-Nederlandse taalarchief van Tom Polak. ~12.000 uitdrukkingen uit radio en krant, 2004–2025.",
+  "lang": "nl",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#FFD400",
+  "background_color": "#1f2227",
+  "start_url": ".",
+  "scope": ".",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

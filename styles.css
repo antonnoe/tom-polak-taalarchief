@@ -1,0 +1,244 @@
+/* =========================================================================
+   styles.css — BASELINE / PLACEHOLDER
+   Werkende, mobile-first Tour-de-France-stijl zodat de app nu al testbaar is.
+   Claude Design vervangt dit later; de class-namen (class-contract) blijven.
+   ========================================================================= */
+
+:root {
+  --jaune: #FFD400;      /* gele trui */
+  --pois: #e4322b;       /* bolletjestrui (rood) */
+  --vert: #2ecc71;       /* groene trui */
+  --ink: #1f2227;
+  --paper: #fbfbf9;
+  --card: #ffffff;
+  --line: #e7e7e2;
+  --muted: #6b7280;
+  --shadow: 0 1px 3px rgba(0,0,0,.08);
+  --tab-h: 60px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  -webkit-text-size-adjust: 100%;
+}
+
+/* -------------------------- HEADER -------------------------- */
+.gb-header {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px calc(10px) 14px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  background: linear-gradient(180deg, var(--jaune), #ffe24d);
+  border-bottom: 3px solid var(--ink);
+}
+.gb-dossard {
+  flex: 0 0 auto;
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  background: #fff; color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 8px;
+  font-weight: 800; font-size: 18px;
+  box-shadow: var(--shadow);
+}
+.gb-wordmark { font-weight: 800; font-size: 19px; line-height: 1.1; }
+.gb-sub { font-size: 12px; color: #4a4a44; margin-top: 2px; }
+
+/* -------------------------- CONTROLS -------------------------- */
+.gb-controls {
+  position: sticky; top: 72px; z-index: 20;
+  background: var(--paper);
+  padding: 10px 14px 6px;
+  border-bottom: 1px solid var(--line);
+}
+.gb-search {
+  width: 100%; padding: 12px 14px;
+  border: 2px solid var(--ink); border-radius: 12px;
+  font-size: 16px; background: #fff;
+}
+.gb-jerseys { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; }
+.gb-jersey {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 12px; border-radius: 999px;
+  border: 2px solid var(--ink); background: #fff;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.gb-jersey__ico { font-size: 13px; }
+.gb-jersey.is-active { color: #fff; }
+.gb-jersey--jaune.is-active { background: var(--jaune); color: var(--ink); }
+.gb-jersey--pois.is-active  { background: var(--pois); }
+.gb-jersey--vert.is-active  { background: var(--vert); }
+.gb-jersey--afk.is-active   { background: var(--ink); }
+
+.gb-morefilters { margin-top: 8px; font-size: 14px; }
+.gb-morefilters summary { cursor: pointer; color: var(--muted); padding: 4px 0; }
+.gb-filterbody { display: grid; gap: 10px; padding: 8px 0; }
+.gb-field { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+.gb-field select, .gb-field input[type=range] { width: 100%; }
+.gb-field select { padding: 8px; border: 1px solid var(--line); border-radius: 8px; font-size: 15px; }
+.gb-reset { justify-self: start; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; }
+.gb-count { font-size: 12px; color: var(--muted); padding: 6px 0 2px; }
+
+/* -------------------------- VIEWS -------------------------- */
+.gb-view { display: none; }
+.gb-view.is-active { display: block; }
+.gb-vtitle { margin: 16px 14px 4px; font-size: 20px; }
+.gb-vlede { margin: 0 14px 12px; color: var(--muted); font-size: 14px; }
+
+/* -------------------------- VIEWPORT (virtual list) -------------------------- */
+.gb-viewport {
+  position: relative;
+  height: calc(100vh - 230px - var(--tab-h));
+  min-height: 320px;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 0 12px;
+}
+#spacer { position: relative; width: 1px; }
+#list { position: absolute; left: 0; right: 0; top: 0; }
+
+/* -------------------------- ÉTAPE DU JOUR -------------------------- */
+.gb-etape {
+  margin: 12px; padding: 14px;
+  background: linear-gradient(135deg, #fff, #fff8d6);
+  border: 2px solid var(--ink); border-radius: 14px;
+  box-shadow: var(--shadow); cursor: pointer;
+}
+.gb-etape__head { font-weight: 800; font-size: 13px; letter-spacing: .04em; color: var(--pois); margin-bottom: 6px; }
+
+/* -------------------------- CARD -------------------------- */
+.gb-card {
+  position: relative;
+  height: 124px; overflow: hidden;          /* vaste hoogte ⇒ stabiele virtualisatie */
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--jaune);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+.gb-fr {
+  font-weight: 700; font-size: 15px; line-height: 1.3;
+  display: flex; align-items: flex-start; gap: 6px;
+}
+/* In de kaart: Frans op max 2 regels, luidsprekertje rechtsboven (uit de flow) */
+.gb-card .gb-fr {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; padding-right: 26px;
+}
+.gb-nl {
+  color: #374151; font-size: 14px; margin-top: 3px; line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.gb-tts {
+  flex: 0 0 auto; margin-left: auto;
+  border: none; background: transparent; cursor: pointer;
+  font-size: 16px; line-height: 1; padding: 2px 4px;
+}
+.gb-card .gb-tts { position: absolute; top: 6px; right: 6px; margin: 0; }
+.gb-card .gb-badges { flex-wrap: nowrap; overflow: hidden; position: absolute; left: 12px; right: 12px; bottom: 10px; }
+.gb-raw {
+  white-space: pre-wrap; word-break: break-word;
+  background: #f5f5f0; border: 1px dashed var(--line); border-radius: 8px;
+  padding: 10px; font-size: 13px; color: #333; margin: 0;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.gb-rawlabel { font-size: 12px; color: var(--muted); margin: 12px 0 4px; }
+
+/* -------------------------- BADGES / CHIPS -------------------------- */
+.gb-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+.gb-chip {
+  font-size: 11px; font-weight: 600; line-height: 1;
+  padding: 4px 8px; border-radius: 999px;
+  border: 1px solid var(--line); background: #f3f4f6; color: #374151;
+  white-space: nowrap;
+}
+.gb-chip--source { background: #e8effc; border-color: #cdddfa; color: #1e40af; }
+.gb-chip--year   { background: #eef2f7; color: #334155; }
+.gb-chip--topic  { background: #f1f5f0; color: #3f6212; }
+.gb-chip--pepite { background: var(--vert); border-color: var(--vert); color: #fff; }
+.gb-chip--afk    { background: var(--ink); border-color: var(--ink); color: #fff; }
+.gb-origbtn {
+  margin-left: auto; font-size: 11px; font-weight: 600;
+  border: 1px solid var(--line); background: #fff; color: var(--muted);
+  padding: 4px 8px; border-radius: 999px; cursor: pointer;
+}
+.gb-empty { padding: 28px 14px; text-align: center; color: var(--muted); }
+
+/* -------------------------- CLASSEMENT -------------------------- */
+.gb-classement { padding: 0 12px 16px; display: grid; gap: 6px; }
+.gb-classement__row {
+  display: grid; grid-template-columns: 28px 1fr 70px;
+  align-items: center; gap: 8px;
+  width: 100%; text-align: left;
+  background: #fff; border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 10px; cursor: pointer; position: relative;
+}
+.gb-classement__row--leader { border-color: var(--jaune); border-left: 4px solid var(--jaune); }
+.gb-classement__rank { font-weight: 800; color: var(--muted); }
+.gb-classement__name { font-weight: 600; font-size: 14px; }
+.gb-classement__bar {
+  position: absolute; left: 0; bottom: 0; height: 3px; background: var(--jaune);
+  border-radius: 0 0 0 8px;
+}
+.gb-classement__count { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+
+/* -------------------------- TIMELINE -------------------------- */
+.gb-timeline {
+  display: flex; align-items: flex-end; gap: 4px;
+  height: 200px; padding: 0 12px 8px; overflow-x: auto;
+}
+.gb-timeline__col {
+  flex: 1 0 26px; height: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+  background: none; border: none; cursor: pointer; gap: 4px;
+}
+.gb-timeline__bar { width: 70%; background: var(--pois); border-radius: 4px 4px 0 0; min-height: 3px; }
+.gb-timeline__lbl { font-size: 10px; color: var(--muted); }
+
+/* -------------------------- PROSE / PROLOGUE -------------------------- */
+.gb-prose { padding: 4px 16px 24px; max-width: 680px; line-height: 1.6; font-size: 15px; }
+.gb-prose .gb-credits { font-size: 12px; color: var(--muted); margin-top: 20px; }
+
+/* -------------------------- DETAIL DIALOG -------------------------- */
+.gb-detail {
+  border: none; border-radius: 16px 16px 0 0; padding: 18px 16px 24px;
+  width: 100%; max-width: 560px;
+  position: fixed; bottom: 0; top: auto; margin: 0 auto;
+  box-shadow: 0 -4px 24px rgba(0,0,0,.2);
+}
+.gb-detail::backdrop { background: rgba(0,0,0,.4); }
+.gb-detail__close {
+  position: absolute; right: 12px; top: 12px;
+  border: none; background: #f0f0ec; border-radius: 999px;
+  width: 32px; height: 32px; font-size: 16px; cursor: pointer;
+}
+.gb-detail__fr { font-weight: 800; font-size: 18px; margin: 6px 40px 6px 0; display: flex; gap: 8px; }
+.gb-detail__nl { font-size: 15px; color: #374151; margin: 0 0 6px; }
+
+/* -------------------------- TABBAR -------------------------- */
+.gb-tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: flex; height: var(--tab-h);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #fff; border-top: 2px solid var(--ink);
+}
+.gb-tab {
+  flex: 1; border: none; background: none; cursor: pointer;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+}
+.gb-tab.is-active { color: var(--ink); box-shadow: inset 0 3px 0 var(--jaune); }
+
+/* -------------------------- DESKTOP -------------------------- */
+@media (min-width: 760px) {
+  .gb-controls { top: 70px; }
+  #list { display: block; }
+  .gb-prose { margin: 0 auto; }
+}
